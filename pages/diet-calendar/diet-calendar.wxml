@@ -1,0 +1,106 @@
+<view class="page-container">
+
+  <view class="calendar-header">
+    <view class="cal-nav" bindtap="prevMonth">‹</view>
+    <view class="cal-title">{{year}}年{{month + 1}}月</view>
+    <view class="cal-nav" bindtap="nextMonth">›</view>
+  </view>
+
+  <view class="week-header">
+    <view class="week-day" wx:for="{{weekDays}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="calendar-grid">
+    <block wx:for="{{calendarDays}}" wx:key="index">
+      <view wx:if="{{item === null}}" class="cal-cell empty"></view>
+      <view wx:else class="cal-cell {{item.isSelected ? 'selected' : ''}} {{item.isToday ? 'today' : ''}}"
+            bindtap="selectDate" data-date="{{item.date}}">
+        <view class="day-num">{{item.day}}</view>
+        <view wx:if="{{item.energyStatus !== 'none'}}" class="plan-dots">
+          <view class="plan-dot dot-energy-{{item.energyStatus}}"></view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="legend-row">
+    <view class="legend-item"><view class="legend-dot dot-energy-ok"></view>足够</view>
+    <view class="legend-item"><view class="legend-dot dot-energy-low"></view>不足</view>
+    <view class="legend-item"><view class="legend-dot dot-energy-high"></view>过量</view>
+    <view class="legend-item"><view class="legend-dot dot-energy-none"></view>无记录</view>
+  </view>
+
+  <view class="card energy-card">
+    <view class="energy-circle">
+      <view class="circle-bg"></view>
+      <view class="circle-progress" style="--progress: {{energyPercent}}"></view>
+      <view class="circle-content">
+        <view class="energy-num">{{totalIntake.energy}}</view>
+        <view class="energy-label">/ {{target.energy.max}} kcal</view>
+        <view class="energy-status tag {{energyStatusClass}}">{{energyStatus || '无记录'}}</view>
+      </view>
+    </view>
+    <view class="energy-split">
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.breakfast}}</view>
+        <view class="split-label">早餐</view>
+      </view>
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.lunch}}</view>
+        <view class="split-label">午餐</view>
+      </view>
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.dinner}}</view>
+        <view class="split-label">晚餐</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title"><text>营养素汇总</text></view>
+    <view class="nutrition-list">
+      <view class="nutrition-item" wx:for="{{nutritionItems}}" wx:key="key">
+        <view class="nutrition-header">
+          <text class="nutrition-name">{{item.label}}</text>
+          <text class="nutrition-val">{{item.current}} / {{item.max}}{{item.unit}}</text>
+          <view class="tag {{item.statusClass}}">{{item.status}}</view>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill {{item.statusClass}}" style="width: {{item.percent}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">
+      <text>{{selectedDate}} · 饮食记录</text>
+      <text class="record-count" wx:if="{{mergedDetailRecords.length}}">共{{mergedDetailRecords.length}}项</text>
+    </view>
+    <view wx:if="{{mergedDetailRecords.length === 0}}" class="empty-state">
+      <view class="empty-text">这一天还没有饮食记录</view>
+      <view class="empty-hint">点击右下角按钮添加</view>
+    </view>
+    <view wx:else class="record-list">
+      <view class="record-item" wx:for="{{mergedDetailRecords}}" wx:key="record_id">
+        <view class="record-meal-badge meal-{{item.meal_type}}">{{mealTypeMap[item.meal_type]}}</view>
+        <view class="record-body">
+          <view class="record-name">
+            {{item.food_name}}
+            <text wx:if="{{item.count > 1}}" class="record-merge-badge">×{{item.count}}</text>
+          </view>
+          <view class="record-detail">
+            {{item.weight}}g · {{item.energy}}kcal
+            <text class="ndot">·</text>P{{item.protein}}g
+            <text class="ndot">·</text>F{{item.fat}}g
+            <text class="ndot">·</text>C{{item.carb}}g
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="fab" bindtap="goDietAdd">
+    <view class="fab-plus"></view>
+  </view>
+</view>

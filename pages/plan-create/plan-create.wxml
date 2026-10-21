@@ -1,0 +1,155 @@
+<view class="page-container plan-create-page">
+  <view class="plan-header card">
+    <input class="plan-name-input" placeholder="输入计划名称，如 胸部训练" value="{{planName}}" bindinput="onNameInput" />
+    <view class="plan-date-row">
+      <text class="label">执行日期</text>
+      <picker mode="date" value="{{planDate}}" bindchange="onDateChange">
+        <view class="date-picker">{{planDate}}</view>
+      </picker>
+    </view>
+    <view class="plan-date-row">
+      <text class="label">提醒时间</text>
+      <picker mode="time" value="{{remindTime}}" bindchange="onTimeChange">
+        <view class="date-picker">{{remindTime}}</view>
+      </picker>
+      <switch checked="{{remindEnabled}}" bindchange="onRemindToggle" color="#10B981" />
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">
+      <view class="title-icon"></view>
+      <text>器械明细</text>
+      <text class="summary">共{{planItems.length}}项</text>
+    </view>
+
+    <view wx:if="{{planItems.length === 0}}" class="empty-state">
+      <view class="empty-icon">🏋️</view>
+      <view class="empty-text">还没有选择器械</view>
+    </view>
+
+    <view wx:else class="plan-item-list">
+      <view class="plan-item" wx:for="{{planItems}}" wx:key="equipment_id">
+        <view class="item-drag">{{index + 1}}</view>
+        <view class="item-content">
+          <view class="item-header">
+            <text class="item-name">{{item.name}}</text>
+            <text class="item-muscle">{{item.muscle_group}}</text>
+          </view>
+          <view class="item-recommend" wx:if="{{item.equipment_type !== 4}}">
+            <view class="rec-field">
+              <text class="rec-label">重量</text>
+              <input class="rec-input" type="digit" value="{{item.weight}}" bindinput="updateItem" data-field="weight" data-index="{{index}}" />
+              <text class="rec-unit">kg</text>
+            </view>
+            <view class="rec-field">
+              <text class="rec-label">组</text>
+              <input class="rec-input small" type="number" value="{{item.sets}}" bindinput="updateItem" data-field="sets" data-index="{{index}}" />
+            </view>
+            <view class="rec-field">
+              <text class="rec-label">次</text>
+              <input class="rec-input small" type="number" value="{{item.reps}}" bindinput="updateItem" data-field="reps" data-index="{{index}}" />
+            </view>
+          </view>
+          <view class="item-recommend" wx:else>
+            <view class="rec-field">
+              <text class="rec-label">时长</text>
+              <input class="rec-input" type="number" value="{{item.duration}}" bindinput="updateItem" data-field="duration" data-index="{{index}}" />
+              <text class="rec-unit">秒</text>
+            </view>
+            <view class="rec-field">
+              <text class="rec-label">组</text>
+              <input class="rec-input small" type="number" value="{{item.sets}}" bindinput="updateItem" data-field="sets" data-index="{{index}}" />
+            </view>
+          </view>
+        </view>
+        <view class="item-delete" catchtap="removeItem" data-index="{{index}}">×</view>
+      </view>
+    </view>
+
+    <view class="add-more-row">
+      <view class="add-more" bindtap="goEquipment">
+        <text class="add-more-icon">🏋️</text>
+        <text>去器械库选器械</text>
+      </view>
+      <view class="add-more" bindtap="openExercisePicker">
+        <text class="add-more-icon">📋</text>
+        <text>直接选训练动作</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="card summary-card">
+    <view class="card-title">
+      <view class="title-icon"></view>
+      <text>计划汇总</text>
+    </view>
+    <view class="summary-grid">
+      <view class="summary-item">
+        <view class="summary-num">{{totalSets}}</view>
+        <view class="summary-label">总组数</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-num">{{totalReps}}</view>
+        <view class="summary-label">总次数</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-num">{{estimatedCalories}}</view>
+        <view class="summary-label">预估消耗(kcal)</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-bar safe-bottom">
+    <view class="ab-secondary" bindtap="saveTemplate">
+      <view class="abs-ic">⭐</view>
+      <view class="abs-body">
+        <view class="abs-title">保存模板</view>
+        <view class="abs-sub">下次快速生成</view>
+      </view>
+    </view>
+    <view class="ab-primary" bindtap="savePlan">
+      <view wx:if="{{saving}}" class="ab-spinner"></view>
+      <text wx:else class="ab-ic">💪</text>
+      <text class="ab-txt">{{saving ? '保存中...' : '保存计划'}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{showExercisePicker}}" class="modal-mask" bindtap="closeExercisePicker">
+    <view class="modal-box modal-lg">
+      <view class="modal-title-row">
+        <view class="modal-title">选择训练动作</view>
+        <view class="modal-close" catchtap="closeExercisePicker">×</view>
+      </view>
+
+      <view class="modal-search-wrap">
+        <text class="modal-search-ic">🔍</text>
+        <input class="modal-input" placeholder="搜索动作名或肌群" value="{{exerciseKeyword}}" bindinput="onExerciseKeyword" />
+      </view>
+
+      <view class="part-scroll" catchtap="">
+        <view class="part-tab {{exerciseFilter === item.id ? 'active' : ''}}" wx:for="{{exerciseParts}}" wx:key="id"
+              data-id="{{item.id}}" catchtap="onExerciseFilter">{{item.name}}</view>
+      </view>
+
+      <scroll-view scroll-y="true" class="exercise-picker-list" catchtap="">
+        <view wx:if="{{filteredExercises.length === 0}}" class="empty">暂无匹配动作</view>
+        <view class="ex-pick-item" wx:for="{{filteredExercises}}" wx:key="exercise_id"
+              data-id="{{item.exercise_id}}" catchtap="pickExercise">
+          <view class="ex-pick-main">
+            <view class="ex-pick-name">{{item.name}}</view>
+            <view class="ex-pick-tags">
+              <text class="ex-tag ex-tag-muscle">{{item.muscle_group}}</text>
+              <text class="ex-tag ex-tag-cal">🔥 {{item.calories_per_minute}} kcal/min</text>
+            </view>
+          </view>
+          <view class="ex-pick-plus">+</view>
+        </view>
+      </scroll-view>
+
+      <view class="modal-btns">
+        <view class="modal-btn cancel" catchtap="closeExercisePicker">关闭</view>
+      </view>
+    </view>
+  </view>
+</view>

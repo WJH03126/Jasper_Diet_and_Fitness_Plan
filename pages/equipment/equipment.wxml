@@ -1,0 +1,107 @@
+<view class="page-container">
+  <view class="header">
+    <view class="header-title">器械库</view>
+    <view class="header-search">
+      <input class="search-input" placeholder="搜索器械或肌群" value="{{keyword}}" bindinput="onKeywordInput" confirm-type="search" />
+    </view>
+  </view>
+
+  <view class="filter-tabs">
+    <view class="part-scroll">
+      <view class="part-tab {{activePart === item.id ? 'active' : ''}}" wx:for="{{partList}}" wx:key="id" data-id="{{item.id}}" bindtap="selectPart">{{item.name}}</view>
+    </view>
+  </view>
+
+  <view class="type-filters">
+    <view class="type-filter-item {{activeType === 0 ? 'active' : ''}}" data-type="0" bindtap="selectType">全部</view>
+    <view class="type-filter-item {{activeType === 1 ? 'active' : ''}}" data-type="1" bindtap="selectType">自由重量</view>
+    <view class="type-filter-item {{activeType === 2 ? 'active' : ''}}" data-type="2" bindtap="selectType">固定器械</view>
+    <view class="type-filter-item {{activeType === 3 ? 'active' : ''}}" data-type="3" bindtap="selectType">绳索器械</view>
+    <view class="type-filter-item {{activeType === 4 ? 'active' : ''}}" data-type="4" bindtap="selectType">自重</view>
+    <view class="type-filter-item {{activeType === 5 ? 'active' : ''}}" data-type="5" bindtap="selectType">弹力绳</view>
+  </view>
+
+  <view wx:if="{{filteredEquipments.length > 0}}" class="batch-bar">
+    <view class="batch-info">共 {{filteredEquipments.length}} 件，已选 {{selectedEquipments.length}} 件</view>
+    <view class="batch-actions">
+      <view class="ba-btn" bindtap="toggleSelectAll">
+        {{_allCurrentSelected ? '取消全选' : '全选当前'}}
+      </view>
+      <view wx:if="{{selectedEquipments.length > 0}}" class="ba-btn clear" bindtap="clearAllSelect">清空</view>
+    </view>
+  </view>
+
+  <view wx:if="{{filteredEquipments.length === 0}}" class="empty">没有找到匹配的器械</view>
+
+  <view class="equip-list">
+    <view class="equip-card {{item._selected ? 'selected' : ''}}" wx:for="{{filteredEquipments}}" wx:key="equipment_id">
+      <view class="eq-top">
+        <view class="eq-avatar">{{item.primary_part === 1 ? '胸' : item.primary_part === 2 ? '背' : item.primary_part === 3 ? '肩' : item.primary_part === 4 ? '臂' : item.primary_part === 5 ? '腿' : item.primary_part === 7 ? '热' : '核'}}</view>
+        <view class="eq-info" bindtap="viewDetail" data-id="{{item.equipment_id}}">
+          <view class="eq-name">{{item.name}}</view>
+          <view class="eq-sub">
+            <text class="eq-tag eq-type">{{item.equipment_type === 1 ? '自由重量' : item.equipment_type === 2 ? '固定器械' : item.equipment_type === 3 ? '绳索器械' : item.equipment_type === 5 ? '弹力绳' : '自重'}}</text>
+            <text class="eq-tag eq-part">{{item.muscle_group || (item.primary_part === 1 ? '胸部' : item.primary_part === 2 ? '背部' : item.primary_part === 3 ? '肩部' : item.primary_part === 4 ? '手臂' : item.primary_part === 5 ? '腿部' : item.primary_part === 7 ? '热身' : '核心')}}</text>
+          </view>
+        </view>
+        <view wx:if="{{item._selected}}" class="eq-check-badge">✓</view>
+      </view>
+      <view class="eq-actions">
+        <view class="eq-btn eq-primary" catchtap="openExercisePicker" data-id="{{item.equipment_id}}">查看训练动作</view>
+        <view class="eq-btn {{item._selected ? 'eq-selected' : 'eq-ghost'}}" catchtap="toggleSelect" data-id="{{item.equipment_id}}">
+          {{item._selected ? '✓ 已选' : '选入计划'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="selected-bar" wx:if="{{selectedEquipments.length > 0}}" bindtap="goCreatePlan">
+    <view class="sel-count">已选 {{selectedEquipments.length}} 件器械</view>
+    <view class="sel-arrow">去生成计划 ></view>
+  </view>
+
+  <view wx:if="{{showDetail && currentEquipment}}" class="modal-mask" bindtap="closeDetail">
+    <view class="modal-box modal-lg" catchtap="">
+      <view class="modal-title">{{currentEquipment.name}}</view>
+      <view class="modal-section">
+        <view class="modal-label">器械类型</view>
+        <view class="modal-val">{{currentEquipment.equipment_type === 1 ? '自由重量' : currentEquipment.equipment_type === 2 ? '固定器械' : currentEquipment.equipment_type === 3 ? '绳索器械' : currentEquipment.equipment_type === 5 ? '弹力绳' : '自重'}}</view>
+      </view>
+      <view class="modal-section">
+        <view class="modal-label">目标肌群</view>
+        <view class="modal-val">{{currentEquipment.muscle_group || currentEquipment.primary_part}}</view>
+      </view>
+      <view class="modal-section" wx:if="{{currentEquipment.base_load_factor}}">
+        <view class="modal-label">基础负重系数</view>
+        <view class="modal-val">{{currentEquipment.base_load_factor}}</view>
+      </view>
+      <view class="modal-section" wx:if="{{currentEquipment.action_description}}">
+        <view class="modal-label">动作说明</view>
+        <view class="modal-desc">{{currentEquipment.action_description}}</view>
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn confirm" bindtap="closeDetail">关闭</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showExerciseModal}}" class="modal-mask" bindtap="closeExerciseModal">
+    <view class="modal-box modal-lg" catchtap="">
+      <view class="modal-title">{{selectedForExercise.name}} · 训练动作</view>
+      <view class="modal-sub">共 {{filteredExercises.length}} 个动作</view>
+      <scroll-view scroll-y="true" class="exercise-list">
+        <view wx:if="{{filteredExercises.length === 0}}" class="empty">暂无匹配动作</view>
+        <view class="exercise-item" wx:for="{{filteredExercises}}" wx:key="exercise_id">
+          <view class="ex-avatar">{{item.muscle_group ? item.muscle_group.slice(0,1) : '训'}}</view>
+          <view class="ex-main">
+            <view class="ex-name">{{item.name}}</view>
+            <view class="ex-sub">{{item.muscle_group}} · {{item.calories_per_minute}} kcal/min</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="modal-btns">
+        <view class="modal-btn confirm" bindtap="closeExerciseModal">关闭</view>
+      </view>
+    </view>
+  </view>
+</view>

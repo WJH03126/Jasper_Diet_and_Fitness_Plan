@@ -1,0 +1,195 @@
+<view class="page-container">
+
+  <view class="calendar-header">
+    <view class="cal-nav" bindtap="prevMonth">‹</view>
+    <view class="cal-title">{{year}}年{{month + 1}}月</view>
+    <view class="cal-nav" bindtap="nextMonth">›</view>
+  </view>
+
+  <view class="week-header">
+    <view class="week-day" wx:for="{{weekDays}}" wx:key="*this">{{item}}</view>
+  </view>
+
+  <view class="calendar-grid">
+    <view wx:for="{{calendarDays}}" wx:key="index"
+          class="cal-cell {{item === null ? 'empty' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.isToday ? 'today' : ''}} {{item.hasPlan ? 'has-plan' : ''}}"
+          data-date="{{item.date}}"
+          bindtap="selectDate">
+      <block wx:if="{{item}}">
+        <view class="day-num">{{item.day}}</view>
+        <view wx:if="{{item.hasPlan}}" class="plan-dots">
+          <view wx:for="{{item.status === 1 ? [1] : item.status === 0 ? [0] : [2]}}" wx:key="*this" wx:for-item="s" class="plan-dot dot-{{s}}"></view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <view class="legend-row">
+    <view class="legend-item"><view class="legend-dot dot-0"></view>待执行</view>
+    <view class="legend-item"><view class="legend-dot dot-1"></view>已完成</view>
+    <view class="legend-item"><view class="legend-dot dot-2"></view>无计划</view>
+  </view>
+
+  <view class="content-tabs">
+    <view class="ct-item {{selectedTab === 'plans' ? 'active' : ''}}" data-tab="plans" bindtap="selectTab">📋 我的计划</view>
+    <view class="ct-item {{selectedTab === 'templates' ? 'active' : ''}}" data-tab="templates" bindtap="selectTab">⭐ 我的模板</view>
+    <view class="ct-edit-btn {{editMode ? 'active' : ''}}" bindtap="toggleEditMode">
+      {{editMode ? '完成' : '编辑'}}
+    </view>
+  </view>
+
+  <view class="card plan-list-card" wx:if="{{selectedTab === 'plans'}}">
+    <view class="card-title">
+      <view class="title-icon"></view>
+      <text>{{selectedDate}} 的计划</text>
+      <text class="plan-count">共 {{selectedPlans.length}} 项</text>
+    </view>
+
+    <view wx:if="{{editMode && selectedPlans.length > 0}}" class="select-bar">
+      <view class="sb-check" bindtap="checkAllPlans">
+        <text class="sb-label">{{checkedPlanIds.length === selectedPlans.length && selectedPlans.length > 0 ? '取消全选' : '全选'}}</text>
+      </view>
+      <view class="sb-count">已选 {{checkedPlanIds.length}} 项</view>
+    </view>
+
+    <view wx:if="{{selectedPlans.length === 0}}" class="empty-state">
+      <view class="empty-icon">📅</view>
+      <view class="empty-text">这一天还没有计划</view>
+      <view class="empty-action" bindtap="goCreatePlan">+ 新建计划</view>
+    </view>
+
+    <view wx:else class="plan-list">
+      <view class="plan-card {{editMode ? 'editing' : ''}}" wx:for="{{selectedPlans}}" wx:key="plan_id">
+        <view wx:if="{{editMode}}" class="check-wrap" catchtap="toggleCheckPlan" data-id="{{item.plan_id}}">
+          <view class="check-circle {{item._selected ? 'checked' : ''}}">
+            <text wx:if="{{item._selected}}" class="check-icon">✓</text>
+          </view>
+        </view>
+        <view class="plan-body">
+          <view class="plan-header">
+            <view class="plan-name">{{item.plan_name}}</view>
+            <view class="plan-status status-{{item.status}}">{{statusMap[item.status]}}</view>
+          </view>
+          <view class="plan-meta">
+            <text>{{item.items.length || 0}} 项器械</text>
+            <text class="sep">·</text>
+            <text>🔥 {{item.estimated_calories || 0}} kcal</text>
+            <text class="sep">·</text>
+            <text>{{item.total_sets || 0}} 组</text>
+          </view>
+          <view wx:if="{{item.remind_time}}" class="plan-remind">⏰ {{item.remind_time}} 提醒</view>
+          <view wx:if="{{!editMode}}" class="plan-actions">
+            <view class="pa-btn" catchtap="viewPlan" data-id="{{item.plan_id}}">查看</view>
+            <view wx:if="{{item.status === 0}}" class="pa-btn primary" catchtap="completePlan" data-id="{{item.plan_id}}">标记完成</view>
+            <view class="pa-btn danger" catchtap="deletePlan" data-id="{{item.plan_id}}">删除</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{selectedPlans.length === 0}}" class="all-plans-link" bindtap="goCreatePlan">
+      + 新建计划
+    </view>
+  </view>
+
+  <view class="card template-list-card" wx:if="{{selectedTab === 'templates'}}">
+    <view class="card-title">
+      <view class="title-icon"></view>
+      <text>我的模板</text>
+      <text class="plan-count">共 {{templates.length}} 个</text>
+    </view>
+
+    <view wx:if="{{editMode && templates.length > 0}}" class="select-bar">
+      <view class="sb-check" bindtap="checkAllTpls">
+        <text class="sb-label">{{checkedTplIds.length === templates.length && templates.length > 0 ? '取消全选' : '全选'}}</text>
+      </view>
+      <view class="sb-count">已选 {{checkedTplIds.length}} 项</view>
+    </view>
+
+    <view wx:if="{{templates.length === 0}}" class="empty-state">
+      <view class="empty-icon">⭐</view>
+      <view class="empty-text">还没有保存模板</view>
+      <view class="empty-hint">在「生成计划」页面保存后可在此使用</view>
+    </view>
+
+    <view wx:else class="tpl-list">
+      <view class="tpl-card {{editMode ? 'editing' : ''}}" wx:for="{{templates}}" wx:key="template_id">
+        <view wx:if="{{editMode}}" class="check-wrap" catchtap="toggleCheckTpl" data-id="{{item.template_id}}">
+          <view class="check-circle {{item._selected ? 'checked' : ''}}">
+            <text wx:if="{{item._selected}}" class="check-icon">✓</text>
+          </view>
+        </view>
+        <view class="tpl-body">
+          <view class="tpl-header">
+            <view class="tpl-ic">📋</view>
+            <view class="tpl-body-inner">
+              <view class="tpl-name">{{item.name}}</view>
+              <view class="tpl-meta">{{item.items.length}} 项器械</view>
+            </view>
+          </view>
+          <view class="tpl-items-preview">
+            <view class="tpl-tag" wx:for="{{item.items}}" wx:key="equipment_id" wx:for-item="eq">{{eq.name}}</view>
+          </view>
+          <view wx:if="{{!editMode}}" class="plan-actions">
+            <view class="pa-btn primary" catchtap="useTemplate" data-id="{{item.template_id}}">使用模板</view>
+            <view class="pa-btn danger" catchtap="deleteTemplate" data-id="{{item.template_id}}">删除</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{editMode}}" class="batch-bar safe-bottom">
+    <view class="batch-info">
+      <text wx:if="{{selectedTab === 'plans'}}">已选 {{checkedPlanIds.length}} 个计划</text>
+      <text wx:else>已选 {{checkedTplIds.length}} 个模板</text>
+    </view>
+    <view class="batch-del {{(selectedTab === 'plans' ? checkedPlanIds.length : checkedTplIds.length) === 0 ? 'disabled' : ''}}"
+          wx:if="{{selectedTab === 'plans'}}"
+          bindtap="batchDeletePlans">批量删除</view>
+    <view class="batch-del {{checkedTplIds.length === 0 ? 'disabled' : ''}}"
+          wx:if="{{selectedTab === 'templates'}}"
+          bindtap="batchDeleteTpls">批量删除</view>
+  </view>
+
+  <view wx:if="{{showDetail}}" class="modal-mask" bindtap="closeDetail">
+    <view class="modal-box detail-box" catchtap="">
+      <view class="modal-title">计划详情</view>
+      <view wx:if="{{detailPlan}}" class="detail-content">
+        <view class="detail-row">
+          <view class="dlbl">名称</view>
+          <view class="dval">{{detailPlan.plan_name}}</view>
+        </view>
+        <view class="detail-row">
+          <view class="dlbl">日期</view>
+          <view class="dval">{{detailPlan.plan_date}}</view>
+        </view>
+        <view class="detail-row">
+          <view class="dlbl">状态</view>
+          <view class="dval"><text class="plan-status status-{{detailPlan.status}}">{{statusMap[detailPlan.status]}}</text></view>
+        </view>
+        <view class="detail-stats">
+          <view class="dstat"><view class="dsnum">{{detailPlan.items.length || 0}}</view><view class="dslbl">器械</view></view>
+          <view class="dstat"><view class="dsnum">{{detailPlan.total_sets || 0}}</view><view class="dslbl">总组数</view></view>
+          <view class="dstat"><view class="dsnum">{{detailPlan.total_reps || 0}}</view><view class="dslbl">总次数</view></view>
+          <view class="dstat"><view class="dsnum">{{detailPlan.estimated_calories || 0}}</view><view class="dslbl">kcal</view></view>
+        </view>
+
+        <view class="detail-title">器械明细</view>
+        <view class="detail-item" wx:for="{{detailPlan.items}}" wx:key="equipment_id">
+          <view class="di-name">{{item.name}}</view>
+          <view class="di-desc">{{item.muscle_group}}</view>
+          <view class="di-reps" wx:if="{{item.equipment_type !== 4}}">{{item.weight}}kg × {{item.sets}}组 × {{item.reps}}次</view>
+          <view class="di-reps" wx:else>{{item.duration || 60}}秒 × {{item.sets}}组</view>
+        </view>
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="closeDetail">关闭</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{!editMode}}" class="fab" bindtap="goCreatePlan">
+    <view class="fab-plus"></view>
+  </view>
+</view>

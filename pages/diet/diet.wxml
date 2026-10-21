@@ -1,0 +1,157 @@
+<view class="page-container">
+  <view class="date-header">
+    <view class="date-nav" bindtap="prevDay">‹</view>
+    <picker mode="date" value="{{currentDate}}" bindchange="onDateChange">
+      <view class="date-display">
+        <text class="date-text">{{currentDate}}</text>
+        <text class="date-week">{{weekText}}</text>
+      </view>
+    </picker>
+    <view class="date-header-right">
+      <view class="date-nav" bindtap="nextDay">›</view>
+      <view class="date-nav cal-entry" bindtap="goDietCalendar">📅</view>
+    </view>
+  </view>
+
+  <view class="card energy-card">
+    <view class="energy-circle">
+      <view class="circle-bg"></view>
+      <view class="circle-progress" style="--progress: {{energyPercent}}"></view>
+      <view class="circle-content">
+        <view class="energy-num">{{totalIntake.energy}}</view>
+        <view class="energy-label">/ {{target.energy.max}} kcal</view>
+        <view class="energy-status tag {{statusClass.energy}}">{{statusText.energy}}</view>
+      </view>
+    </view>
+    <view class="energy-split">
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.breakfast}}</view>
+        <view class="split-label">早餐</view>
+      </view>
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.lunch}}</view>
+        <view class="split-label">午餐</view>
+      </view>
+      <view class="split-item">
+        <view class="split-num">{{mealSplit.dinner}}</view>
+        <view class="split-label">晚餐</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">
+      <text>营养素汇总</text>
+    </view>
+    <view class="nutrition-list">
+      <view class="nutrition-item" wx:for="{{nutritionItems}}" wx:key="key">
+        <view class="nutrition-header">
+          <text class="nutrition-name">{{item.label}}</text>
+          <text class="nutrition-val">{{item.current}} / {{item.max}}{{item.unit}}</text>
+          <view class="tag {{item.statusClass}}">{{item.status}}</view>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill {{item.statusClass}}" style="width: {{item.percent}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title">
+      <text>今日记录</text>
+      <view class="header-right">
+        <text class="record-count" wx:if="{{mergedRecords.length}}">共{{mergedRecords.length}}项</text>
+        <text class="batch-btn {{editMode ? 'active' : ''}}" bindtap="toggleEditMode">{{editMode ? '完成' : '批量管理'}}</text>
+      </view>
+    </view>
+    <view class="meal-tabs">
+      <view class="meal-tab {{activeMeal === 0 ? 'active' : ''}}" bindtap="switchMeal" data-meal="0">全部</view>
+      <view class="meal-tab {{activeMeal === 1 ? 'active' : ''}}" bindtap="switchMeal" data-meal="1">早餐</view>
+      <view class="meal-tab {{activeMeal === 2 ? 'active' : ''}}" bindtap="switchMeal" data-meal="2">午餐</view>
+      <view class="meal-tab {{activeMeal === 3 ? 'active' : ''}}" bindtap="switchMeal" data-meal="3">晚餐</view>
+    </view>
+    <view wx:if="{{editMode}}" class="batch-bar">
+      <view class="batch-info">已选 {{selectedIds.length}} 条</view>
+      <view class="batch-action" bindtap="selectAllRecords">全选</view>
+      <view class="batch-action danger {{selectedIds.length === 0 ? 'disabled' : ''}}" bindtap="batchDelete">批量删除</view>
+    </view>
+    <view wx:if="{{filteredRecords.length === 0}}" class="empty-state">
+      <view class="empty-text">还没有记录哦，快来添加吧！</view>
+    </view>
+    <view wx:else class="record-list">
+      <view class="record-item {{editMode ? 'edit' : ''}}" wx:for="{{filteredRecords}}" wx:key="record_id">
+        <view wx:if="{{editMode}}" class="record-checkbox {{item._selected ? 'checked' : ''}}" catchtap="toggleSelectItem" data-id="{{item.record_id}}">
+          <text wx:if="{{item._selected}}">✓</text>
+        </view>
+        <view class="record-left">
+          <text class="record-meal">{{mealTypeMap[item.meal_type]}}</text>
+        </view>
+        <view class="record-content">
+          <view class="record-name">
+            {{item.food_name}}
+            <text wx:if="{{item.count > 1}}" class="record-merge-badge">×{{item.count}}</text>
+          </view>
+          <view class="record-detail">
+            {{item.weight}}g · {{item.energy}}kcal
+            <text class="ndot">·</text>P{{item.protein}}g
+            <text class="ndot">·</text>F{{item.fat}}g
+            <text class="ndot">·</text>C{{item.carb}}g
+            <text class="ndot">·</text>纤{{item.fiber}}g
+            <text class="ndot">·</text>盐{{item.salt}}g
+          </view>
+        </view>
+        <view wx:if="{{!editMode}}" class="record-delete" catchtap="deleteRecord" data-id="{{item.record_id}}" data-ids="{{item._ids}}">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="quick-actions">
+    <view class="action-btn" bindtap="goWheel">
+      <view class="action-text">转盘选餐</view>
+    </view>
+    <view class="action-btn" bindtap="manualAdd">
+      <view class="action-text">手动添加</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showManualAdd}}" class="ma-mask" catchtap="closeManualAdd">
+    <view class="ma-box" catchtap="noop">
+      <view class="ma-header">
+        <view class="ma-title">手动添加</view>
+        <view class="ma-close" bindtap="closeManualAdd">×</view>
+      </view>
+      <view class="ma-meals">
+        <view class="ma-meal {{manualMealType === 1 ? 'active' : ''}}" bindtap="onManualMealTap" data-meal="1">🌅 早餐</view>
+        <view class="ma-meal {{manualMealType === 2 ? 'active' : ''}}" bindtap="onManualMealTap" data-meal="2">☀️ 午餐</view>
+        <view class="ma-meal {{manualMealType === 3 ? 'active' : ''}}" bindtap="onManualMealTap" data-meal="3">🌙 晚餐</view>
+      </view>
+      <view class="ma-search-bar">
+        <input class="ma-search" placeholder="搜索食物名称" value="{{manualKeyword}}" bindinput="onManualSearch" />
+      </view>
+      <scroll-view scroll-y="true" class="ma-scroll">
+        <view wx:if="{{manualFoodList.length === 0}}" class="ma-empty">没有找到该食物，试试去转盘选餐页面自定义</view>
+        <view class="ma-food-item" wx:for="{{manualFoodList}}" wx:key="food_id">
+          <view class="ma-fi-left" data-id="{{item.food_id}}" bindtap="quickAddFood">
+            <view class="ma-fi-name">
+              {{item.name}}
+              <text wx:if="{{item.isCustom}}" class="ma-fi-tag">自</text>
+            </view>
+            <view class="ma-fi-sub">
+              {{item._weight}}g · {{item._energy}}kcal
+              · P{{item._protein}}g · F{{item._fat}}g · C{{item._carb}}g
+              · 纤{{item._fiber}}g · 盐{{item._salt}}g
+            </view>
+          </view>
+          <view class="ma-fi-actions">
+            <input class="ma-fi-weight" type="digit" value="{{item._weight}}" data-id="{{item.food_id}}" placeholder="g" bindinput="onManualWeightInput" />
+            <view class="ma-fi-add" data-id="{{item.food_id}}" bindtap="quickAddFood">＋</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="ma-footer">
+        <view class="ma-custom-entry" bindtap="openCustomFromManual">＋ 没找到？去自定义食物</view>
+      </view>
+    </view>
+  </view>
+</view>

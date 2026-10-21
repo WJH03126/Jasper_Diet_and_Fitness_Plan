@@ -1,0 +1,249 @@
+<view class="page-container">
+
+  <view class="fit-banner">
+    <view class="banner-bg"></view>
+    <view class="banner-content">
+      <view class="banner-top">
+        <view class="banner-greet">{{greeting}}，坚持就是胜利 💪</view>
+        <view class="banner-date">
+          <view class="date-num">{{todayNum}}</view>
+          <view class="date-meta">
+            <view class="date-ym">{{todayYM}}</view>
+            <view class="date-week">{{todayWeek}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="banner-streak" wx:if="{{weekStats.days > 0}}">
+        <view class="streak-flame">🔥</view>
+        <view class="streak-text">本周已训练 <text class="streak-num">{{weekStats.days}}</text> 天</view>
+      </view>
+      <view class="banner-streak banner-streak-empty" wx:else>
+        <view class="streak-flame">⚡</view>
+        <view class="streak-text">今天也动起来吧，保持运动习惯！</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="fit-actions">
+    <view class="fa-item fa-green" bindtap="goEquipment">
+      <view class="fa-ic">
+        <view class="fa-ic-ring"></view>
+        <text class="fa-emoji">🏋️</text>
+      </view>
+      <view class="fa-txt">器械库</view>
+    </view>
+    <view class="fa-item fa-blue" bindtap="goPlanCreate">
+      <view class="fa-ic">
+        <view class="fa-ic-ring"></view>
+        <text class="fa-emoji">📋</text>
+      </view>
+      <view class="fa-txt">生成计划</view>
+    </view>
+    <view class="fa-item fa-orange" bindtap="goCalendar">
+      <view class="fa-ic">
+        <view class="fa-ic-ring"></view>
+        <text class="fa-emoji">📅</text>
+      </view>
+      <view class="fa-txt">训练日历</view>
+    </view>
+  </view>
+
+  <view class="fit-stats card">
+    <view class="fs-card">
+      <view class="fs-ic">📆</view>
+      <view class="fs-body">
+        <view class="fs-num">{{weekStats.days}}</view>
+        <view class="fs-lbl">训练天数</view>
+      </view>
+      <view class="fs-bar"><view class="fs-fill fs-fill-green" style="width:{{daysProgress}}%"></view></view>
+    </view>
+    <view class="fs-divider"></view>
+    <view class="fs-card">
+      <view class="fs-ic">🔥</view>
+      <view class="fs-body">
+        <view class="fs-num">{{weekStats.calories}}</view>
+        <view class="fs-lbl">消耗 kcal</view>
+      </view>
+      <view class="fs-bar"><view class="fs-fill fs-fill-orange" style="width:{{calProgress}}%"></view></view>
+    </view>
+    <view class="fs-divider"></view>
+    <view class="fs-card">
+      <view class="fs-ic">⏱️</view>
+      <view class="fs-body">
+        <view class="fs-num">{{weekStats.minutes}}</view>
+        <view class="fs-lbl">运动分钟</view>
+      </view>
+      <view class="fs-bar"><view class="fs-fill fs-fill-blue" style="width:{{minProgress}}%"></view></view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title-row">
+      <view class="card-title"><view class="title-icon"></view>体重记录</view>
+      <view class="card-actions">
+        <view wx:if="{{weightRecords.length > 0}}" class="card-action secondary" bindtap="showWeightHistory">历史</view>
+        <view class="card-action" bindtap="showAddWeight">+ 新增</view>
+      </view>
+    </view>
+
+    <view wx:if="{{!latestWeight}}" class="weight-empty">
+      <view class="we-emoji">⚖️</view>
+      <view class="we-text">还没有体重记录</view>
+      <view class="we-hint">点击右上角新增第一条记录吧</view>
+    </view>
+    <view wx:else class="weight-main" bindtap="showWeightHistory">
+      <view class="wm-left">
+        <view class="wm-num">
+          {{latestWeight.weight}}<text class="wm-unit">kg</text>
+        </view>
+        <view class="wm-date">{{latestWeight.record_date}}</view>
+        <view wx:if="{{weightRecords.length > 1}}" class="wm-diff">
+          <text wx:if="{{weightDiff >= 0}}" class="diff-up">↑ {{weightDiff}}</text>
+          <text wx:else class="diff-down">↓ {{weightDiff}}</text>
+          <text class="diff-vs">较上次</text>
+        </view>
+      </view>
+      <view class="wm-right">
+        <view class="wr-spark">
+          <view wx:for="{{weightSparkline}}" wx:key="i" class="wr-bar" style="height:{{item}}%"></view>
+        </view>
+        <view class="wr-tip">{{weightRecords.length > 1 ? '查看全部 ›' : '趋势'}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="card-title-row">
+      <view class="card-title" bindlongpress="openClearMenu"><view class="title-icon"></view>最近训练</view>
+      <view wx:if="{{allTrainingItems.length > 0}}" class="card-more" bindtap="goCalendar">查看全部 ›</view>
+    </view>
+
+    <view wx:if="{{allTrainingItems.length === 0}}" class="fit-empty">
+      <view class="fe-emoji">🏃</view>
+      <view class="fe-text">还没有训练记录</view>
+      <view class="fe-hint">去器械库选个动作开始第一次训练吧</view>
+    </view>
+    <view wx:else class="fr-list">
+      <view class="fr-item" wx:for="{{allTrainingItems}}" wx:key="id">
+        <view class="fr-ic {{item._type === 'plan' ? 'ic-plan' : item.record_type === 'cardio' ? 'ic-cardio' : 'ic-strength'}}">
+          <text wx:if="{{item._type === 'plan'}}">📋</text>
+          <text wx:elif="{{item.record_type === 'cardio'}}">🏃</text>
+          <text wx:else>💪</text>
+        </view>
+        <view class="fr-body">
+          <view class="fr-name-row">
+            <view class="fr-name">{{item.name}}</view>
+            <text wx:if="{{item._type === 'plan' && item.status === 1}}" class="fr-tag tag-done">已完成</text>
+            <text wx:elif="{{item._type === 'plan'}}" class="fr-tag tag-todo">待执行</text>
+            <text wx:elif="{{item.record_type === 'cardio'}}" class="fr-tag tag-cardio">有氧</text>
+            <text wx:else class="fr-tag tag-strength">力量</text>
+          </view>
+          <view class="fr-date-row">
+            <text class="fr-date">{{item.date}}</text>
+            <text class="fr-dot">·</text>
+            <block wx:if="{{item._type === 'plan'}}">
+              <text class="fr-extra">{{item.items_count}} 项器械</text>
+            </block>
+            <block wx:elif="{{item.record_type === 'cardio'}}">
+              <text class="fr-extra">{{item.duration_min}} 分钟</text>
+            </block>
+            <block wx:else>
+              <text class="fr-extra">{{item.sets}}组 × {{item.reps}}次</text>
+            </block>
+          </view>
+        </view>
+        <view class="fr-cal">
+          <view class="fr-cal-num">{{item.calories || 0}}</view>
+          <view class="fr-cal-unit">kcal</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showWeightModal}}" class="modal-mask" bindtap="closeWeightModal">
+    <view class="modal-box" catchtap="">
+      <view class="modal-title">新增体重记录</view>
+      <view class="modal-sub">请输入当前体重（kg）</view>
+      <input class="modal-input" type="digit" placeholder="例如：65.5" value="{{newWeight}}" bindinput="onWeightInput" focus="{{showWeightModal}}" />
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="closeWeightModal">取消</view>
+        <view class="modal-btn confirm" bindtap="confirmAddWeight">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showWeightHistory}}" class="modal-mask" bindtap="closeWeightHistory">
+    <view class="modal-box modal-lg wh-box" catchtap="_noop">
+      <view class="wh-title-row">
+        <view class="wh-title">体重历史</view>
+        <view class="wh-edit-btn" catchtap="toggleWeightEdit">
+          {{weightEditMode ? '完成' : '编辑'}}
+        </view>
+      </view>
+
+      <view wx:if="{{weightEditMode}}" class="wh-toolbar">
+        <view class="wh-tb-left">
+          <view class="wh-check-all" catchtap="toggleWeightCheckAll">
+            <view class="wh-checkbox {{_whAllChecked ? 'on' : ''}}">{{_whAllChecked ? '✓' : ''}}</view>
+            <text>{{_whAllChecked ? '取消全选' : '全选'}}</text>
+          </view>
+          <view wx:if="{{checkedWeightIds.length > 0}}" class="wh-tb-count">已选 {{checkedWeightIds.length}} 项</view>
+        </view>
+        <view class="wh-tb-clear" wx:if="{{checkedWeightIds.length > 0}}" catchtap="clearWeightCheck">清空</view>
+      </view>
+
+      <scroll-view scroll-y="true" class="wh-list" catchtap="_noop">
+        <view wx:if="{{weightRecords.length === 0}}" class="empty">暂无记录</view>
+
+        <view wx:for="{{weightGroups}}" wx:for-item="group" wx:key="groupKey" class="wh-group">
+          <view class="wh-group-label">
+            <text class="wh-group-text">{{group.label}}</text>
+            <text class="wh-group-count">{{group.realCount}} 条</text>
+          </view>
+          <view class="wh-group-items">
+            <view class="wh-item" wx:for="{{group.items}}" wx:for-item="item" wx:key="record_id">
+              <view wx:if="{{weightEditMode}}" class="wh-checkbox {{item._checked ? 'on' : ''}}" catchtap="toggleWeightCheck" data-id="{{item.record_id}}">{{item._checked ? '✓' : ''}}</view>
+              <view class="wh-body">
+                <view class="wh-weight">{{item.weight}}<text class="wh-unit">kg</text></view>
+                <view class="wh-date">{{item.record_date}}</view>
+              </view>
+              <view wx:if="{{!weightEditMode}}" class="wh-del" catchtap="deleteWeightOne" data-id="{{item.record_id}}">删除</view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="wh-pager">
+        <view class="wh-page-left">
+          <text class="wh-total">共 {{totalRecords}} 条</text>
+          <view class="wh-page-sizes">
+            <text class="wh-ps-label">每页</text>
+            <view wx:for="{{pageSizes}}" wx:for-item="ps" wx:for-index="idx" wx:key="*this"
+                  class="wh-ps-item {{pageSize === ps ? 'on' : ''}}"
+                  catchtap="changePageSize" data-idx="{{idx}}">{{ps}}</view>
+          </view>
+        </view>
+        <view class="wh-page-nav">
+          <view class="wh-pg-btn {{currentPage === 1 ? 'disabled' : ''}}" catchtap="prevWeightPage">‹</view>
+          <block wx:for="{{totalPages}}" wx:for-item="idx" wx:for-index="i" wx:key="*this">
+            <view wx:if="{{i === 0 || i === totalPages - 1 || (i >= currentPage - 2 && i <= currentPage + 1)}}"
+                  class="wh-pg-num {{currentPage === i + 1 ? 'on' : ''}}"
+                  catchtap="goWeightPage" data-page="{{i + 1}}">{{i + 1}}</view>
+            <view wx:elif="{{i === currentPage - 3}}" class="wh-pg-ellipsis">…</view>
+          </block>
+          <view class="wh-pg-btn {{currentPage === totalPages ? 'disabled' : ''}}" catchtap="nextWeightPage">›</view>
+        </view>
+      </view>
+
+      <view wx:if="{{weightEditMode && checkedWeightIds.length > 0}}" class="wh-bottom-bar">
+        <view class="wh-bottom-info">已选 {{checkedWeightIds.length}} 项</view>
+        <view class="wh-batch-del" catchtap="batchDeleteWeight">批量删除</view>
+      </view>
+
+      <view wx:if="{{!weightEditMode}}" class="modal-btns">
+        <view class="modal-btn cancel" catchtap="closeWeightHistory">关闭</view>
+      </view>
+    </view>
+  </view>
+
+</view>

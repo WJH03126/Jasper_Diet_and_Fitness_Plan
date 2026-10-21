@@ -1,0 +1,192 @@
+<view class="page-container">
+  <view class="meal-tabs">
+    <view class="meal-tab {{activeMeal === 1 ? 'active' : ''}}" bindtap="switchMeal" data-meal="1">
+      <view class="meal-icon">🌅</view>
+      <view class="meal-name">早餐转盘</view>
+    </view>
+    <view class="meal-tab {{activeMeal === 2 ? 'active' : ''}}" bindtap="switchMeal" data-meal="2">
+      <view class="meal-icon">☀️</view>
+      <view class="meal-name">午餐转盘</view>
+    </view>
+    <view class="meal-tab {{activeMeal === 3 ? 'active' : ''}}" bindtap="switchMeal" data-meal="3">
+      <view class="meal-icon">🌙</view>
+      <view class="meal-name">晚餐转盘</view>
+    </view>
+  </view>
+
+  <view class="wheel-wrap">
+    <view class="wheel-container">
+      <view class="wheel-outer">
+        <view class="wheel {{spinning ? 'spinning' : ''}}" style="transform: rotate({{rotation}}deg); background: {{wheelBg}};">
+          <block wx:for="{{currentPool}}" wx:key="food_id">
+            <view class="sector-pos" style="--idx: {{index}}; --total: {{currentPool.length}};">
+              <view class="sector-text">{{item.name}}</view>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view class="wheel-pointer"></view>
+      <view class="wheel-center">
+        <view wx:if="{{!spinning && selectedResult}}" class="center-result">
+          <view class="cr-name">{{selectedResult.name}}</view>
+          <view class="cr-sub">{{selectedResult.standard_weight}}g · {{selectedResult.energy_per_100g}}kcal</view>
+        </view>
+        <view wx:else class="center-hint">
+          <view class="hint-emoji">🎡</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="spin-btn-wrap">
+      <view class="spin-btn {{spinning ? 'disabled' : ''}}" bindtap="startSpin" wx:if="{{currentPool.length >= 2}}">
+        {{spinning ? '转动中...' : '🎡 转动转盘'}}
+      </view>
+      <view class="spin-btn empty" wx:elif="{{currentPool.length === 1}}">还差 1 种食物</view>
+      <view class="spin-btn empty" wx:else>先添加食物到转盘</view>
+    </view>
+  </view>
+
+  <view class="pool-section">
+    <view class="pool-head">
+      <view class="pool-title"><text class="pool-count">{{currentPool.length}}</text> 种食物</view>
+      <view class="pool-head-btns">
+        <view class="ph-btn ghost" bindtap="togglePoolEdit">{{poolEditMode ? '完成' : '管理'}}</view>
+        <view class="ph-btn ghost" bindtap="openCustomModal">＋ 自定义</view>
+        <view class="ph-btn primary" bindtap="showAddFood">＋ 添加</view>
+      </view>
+    </view>
+    <view wx:if="{{poolEditMode}}" class="pool-edit-bar">
+      <view class="peb-info">已选 {{poolEditSelected.length}} 种</view>
+      <view class="peb-action" bindtap="poolSelectAll">{{poolIsAllSelected ? '取消全选' : '全选'}}</view>
+      <view class="peb-action danger {{poolEditSelected.length === 0 ? 'disabled' : ''}}" bindtap="batchRemoveFromPool">移除</view>
+    </view>
+    <view class="pool-list" wx:if="{{currentPool.length > 0}}">
+      <view class="pool-chip {{poolEditMode ? 'edit' : ''}} {{poolChipSelectedMap[item.food_id] ? 'selected' : ''}}" wx:for="{{currentPool}}" wx:key="food_id">
+        <view wx:if="{{poolEditMode}}" class="chip-check {{poolChipSelectedMap[item.food_id] ? 'checked' : ''}}" catchtap="togglePoolSelect" data-id="{{item.food_id}}">
+          <text wx:if="{{poolChipSelectedMap[item.food_id]}}">✓</text>
+        </view>
+        <text class="chip-name">{{item.name}}<text wx:if="{{item.isCustom}}" class="chip-custom-tag">自</text></text>
+        <text wx:if="{{!poolEditMode}}" class="chip-x" catchtap="removeFromPool" data-id="{{item.food_id}}">×</text>
+      </view>
+    </view>
+    <view class="pool-empty" wx:else>池子空空，点"＋ 添加"选食物吧</view>
+  </view>
+
+  <view class="history-section" wx:if="{{spinHistory.length > 0}}">
+    <view class="history-head">
+      <view class="history-title">本次已选 ({{spinHistory.length}})</view>
+      <view class="clear-btn" bindtap="clearHistory">清空</view>
+    </view>
+    <view class="history-list">
+      <view class="history-row" wx:for="{{spinHistory}}" wx:key="index">
+        <view class="h-dot"></view>
+        <view class="h-name">{{item.name}}</view>
+        <view class="h-weight">{{item.standard_weight}}g</view>
+      </view>
+    </view>
+    <view class="confirm-btn" bindtap="confirmAdd">✓ 一键添加到饮食记录</view>
+  </view>
+
+  <view wx:if="{{showAddModal}}" class="modal-mask" catchtap="closeAddModal">
+    <view class="modal-box" catchtap="noop">
+      <view class="modal-header">
+        <view class="modal-title">{{addModalManageMode ? '食物库管理' : '添加食物到转盘'}}</view>
+        <view class="modal-close" bindtap="closeAddModal">×</view>
+      </view>
+      <view class="modal-toolbar">
+        <input class="modal-search" placeholder="搜索食物名称" value="{{addKeyword}}" bindinput="onAddKeyword" />
+        <view class="custom-entry" bindtap="openCustomModal">＋ 自定义</view>
+      </view>
+      <view class="add-modal-bar">
+        <view class="amb-left">共 {{addList.length}} 种</view>
+        <view class="amb-btn {{addModalManageMode ? 'active' : ''}}" bindtap="toggleAddModalManage">{{addModalManageMode ? '完成' : '管理食物库'}}</view>
+      </view>
+      <view wx:if="{{addModalManageMode}}" class="add-modal-manage-bar">
+        <view class="amm-info">已选 {{addModalSelected.length}} 种</view>
+        <view class="amm-action" bindtap="addModalSelectAll">{{addModalIsAllSelected ? '取消全选' : '全选'}}</view>
+        <view class="amm-action danger {{addModalSelected.length === 0 ? 'disabled' : ''}}" bindtap="batchDeleteFoodDict">批量删除</view>
+      </view>
+      <scroll-view scroll-y="true" class="modal-scroll">
+        <view wx:if="{{addList.length === 0}}" class="empty-hint">没有匹配的食物</view>
+
+        <block wx:if="{{!addModalManageMode}}">
+          <view class="food-item" wx:for="{{addList}}" wx:key="food_id">
+            <view class="fi-left" data-id="{{item.food_id}}" bindtap="confirmAddToPool">
+              <view class="fi-name">{{item.name}}<text wx:if="{{item._isCustom}}" class="fi-tag">自</text></view>
+              <view class="fi-sub">
+                {{item.energy_per_100g}}kcal · P{{item.protein_per_100g}}g · F{{item.fat_per_100g}}g · C{{item.carb_per_100g}}g · 纤{{item.fiber_per_100g}}g · 盐{{item.salt_per_100g}}g
+              </view>
+            </view>
+            <view class="fi-action">加入</view>
+          </view>
+        </block>
+
+        <block wx:else>
+          <view class="food-item manage" wx:for="{{addList}}" wx:key="food_id">
+            <view class="fm-check {{item._selected ? 'checked' : ''}}" catchtap="toggleAddModalSelect" data-id="{{item.food_id}}">
+              <text wx:if="{{item._selected}}">✓</text>
+            </view>
+            <view class="fi-left">
+              <view class="fi-name">{{item.name}}<text wx:if="{{item._isCustom}}" class="fi-tag">自</text></view>
+              <view class="fi-sub">
+                {{item.energy_per_100g}}kcal · P{{item.protein_per_100g}}g · F{{item.fat_per_100g}}g · C{{item.carb_per_100g}}g · 纤{{item.fiber_per_100g}}g · 盐{{item.salt_per_100g}}g
+              </view>
+            </view>
+          </view>
+        </block>
+      </scroll-view>
+      <view wx:if="{{addModalManageMode}}" class="modal-tip">删除后从食物库移除，不会再出现在任何餐次的转盘或手动添加里（内置食物也可删除）</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showCustomModal}}" class="modal-mask" catchtap="closeCustomModal">
+    <view class="modal-box" catchtap="noop">
+      <view class="modal-header">
+        <view class="modal-title">自定义食物</view>
+        <view class="modal-close" bindtap="closeCustomModal">×</view>
+      </view>
+      <view class="form-item">
+        <view class="form-label">食物名称</view>
+        <input class="form-input" placeholder="例如 麻辣烫" value="{{customName}}" data-field="name" bindinput="onCustomInput" />
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <view class="form-label">热量(kcal/100g)</view>
+          <input class="form-input" type="digit" placeholder="500" value="{{customEnergy}}" data-field="energy" bindinput="onCustomInput" />
+        </view>
+        <view class="form-item half">
+          <view class="form-label">蛋白质(g/100g)</view>
+          <input class="form-input" type="digit" placeholder="20" value="{{customProtein}}" data-field="protein" bindinput="onCustomInput" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <view class="form-label">脂肪(g/100g)</view>
+          <input class="form-input" type="digit" placeholder="10" value="{{customFat}}" data-field="fat" bindinput="onCustomInput" />
+        </view>
+        <view class="form-item half">
+          <view class="form-label">碳水(g/100g)</view>
+          <input class="form-input" type="digit" placeholder="30" value="{{customCarb}}" data-field="carb" bindinput="onCustomInput" />
+        </view>
+      </view>
+      <view class="form-row">
+        <view class="form-item half">
+          <view class="form-label">膳食纤维(g/100g)</view>
+          <input class="form-input" type="digit" placeholder="5" value="{{customFiber}}" data-field="fiber" bindinput="onCustomInput" />
+        </view>
+        <view class="form-item half">
+          <view class="form-label">盐(g/100g)</view>
+          <input class="form-input" type="digit" placeholder="0.5" value="{{customSalt}}" data-field="salt" bindinput="onCustomInput" />
+        </view>
+      </view>
+      <view class="form-item">
+        <view class="form-label">标准重量(g)</view>
+        <input class="form-input" type="digit" placeholder="100" value="{{customWeight}}" data-field="weight" bindinput="onCustomInput" />
+      </view>
+      <view class="modal-btns">
+        <view class="modal-btn cancel" bindtap="closeCustomModal">取消</view>
+        <view class="modal-btn confirm" bindtap="saveCustomFood">保存并加入转盘</view>
+      </view>
+    </view>
+  </view>
+</view>

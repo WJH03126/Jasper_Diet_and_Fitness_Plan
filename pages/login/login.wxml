@@ -1,0 +1,20 @@
+<view class="login-page">
+  <view class="login-header">
+    <view class="logo-icon">🌿</view>
+    <view class="app-title">健康管家</view>
+    <view class="app-subtitle">科学健身 · 营养管理 · 品质生活</view>
+  </view>
+
+  <view class="login-content">
+    <button class="login-btn" bindtap="onWxLogin" loading="{{loading}}" disabled="{{loading}}">
+      <text class="btn-icon">💬</text>
+      <text>微信授权登录</text>
+    </button>
+    <view class="login-tip">
+      <text>登录即代表您已阅读并同意</text>
+      <text class="link">《用户协议》</text>
+      <text>与</text>
+      <text class="link">《隐私政策》</text>
+    </view>
+  </view>
+</view>

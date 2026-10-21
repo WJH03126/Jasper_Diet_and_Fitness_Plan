@@ -1,0 +1,51 @@
+<view class="page-container">
+  <view class="step-header">
+    <view class="step-num">1</view>
+    <view class="step-text">完善个人资料</view>
+  </view>
+  <view class="step-desc">请认真填写以下信息，作为个性化健康方案的基础</view>
+
+  <view class="card">
+    <view class="form-item">
+      <text class="form-label">昵称</text>
+      <input class="form-input" placeholder="请输入昵称" value="{{form.nickname}}" bindinput="onInput" data-field="nickname" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">真实姓名</text>
+      <input class="form-input" placeholder="2-10个字符" value="{{form.real_name}}" bindinput="onInput" data-field="real_name" maxlength="10" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">性别</text>
+      <view class="gender-group">
+        <view class="gender-option {{form.gender === 1 ? 'active' : ''}}" bindtap="selectGender" data-value="1">
+          <text>男</text>
+        </view>
+        <view class="gender-option {{form.gender === 2 ? 'active' : ''}}" bindtap="selectGender" data-value="2">
+          <text>女</text>
+        </view>
+      </view>
+    </view>
+    <view class="form-item">
+      <text class="form-label">身高(cm)</text>
+      <input class="form-input" type="digit" placeholder="100-250" value="{{form.height}}" bindinput="onInput" data-field="height" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">体重(kg)</text>
+      <input class="form-input" type="digit" placeholder="20-200" value="{{form.weight}}" bindinput="onInput" data-field="weight" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">年龄</text>
+      <input class="form-input" type="number" placeholder="请输入年龄" value="{{form.age}}" bindinput="onInput" data-field="age" />
+    </view>
+    <view class="form-item">
+      <text class="form-label">活动等级</text>
+      <picker class="form-picker" bindchange="onActivityChange" value="{{activityIndex}}" range="{{activityOptions}}">
+        <view>{{activityOptions[activityIndex]}}</view>
+      </picker>
+    </view>
+  </view>
+
+  <button class="btn-primary submit-btn" bindtap="onSubmit" loading="{{submitting}}">
+    提交并生成健康方案
+  </button>
+</view>

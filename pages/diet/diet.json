@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "饮食记录",
+  "navigationBarBackgroundColor": "#10B981",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

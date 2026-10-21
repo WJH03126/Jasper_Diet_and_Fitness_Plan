@@ -1,0 +1,634 @@
+[
+  {
+    "exercise_id": "eq_chest_001",
+    "name": "楠炶櫕婢橀弶鐘绘惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼崇ǹ銇囬懖锟�"
+  },
+  {
+    "exercise_id": "eq_chest_002",
+    "name": "娑撳﹥鏋╅弶鐘绘惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑐闁拷"
+  },
+  {
+    "exercise_id": "eq_chest_003",
+    "name": "娑撳鏋╅弶鐘绘惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑓闁拷"
+  },
+  {
+    "exercise_id": "eq_chest_004",
+    "name": "楠炶櫕婢橀崫鎴︽惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖锟�"
+  },
+  {
+    "exercise_id": "eq_chest_005",
+    "name": "娑撳﹥鏋╅崫鎴︽惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑐闁拷"
+  },
+  {
+    "exercise_id": "eq_chest_006",
+    "name": "娑撳鏋╅崫鎴︽惄閸椦勫腹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑓闁拷"
+  },
+  {
+    "exercise_id": "eq_chest_007",
+    "name": "閸濇垿鎼╂鐐虹",
+    "category": 1,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖锟�"
+  },
+  {
+    "exercise_id": "eq_chest_008",
+    "name": "閸ф劕协閹恒劏鍏忛張锟�",
+    "category": 1,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖锟�"
+  },
+  {
+    "exercise_id": "eq_chest_009",
+    "name": "閾︾婢忛張鍝勩仚閼筹拷",
+    "category": 1,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞艰厬缂傦拷"
+  },
+  {
+    "exercise_id": "eq_chest_010",
+    "name": "閸欏秴鎮滄鐐虹閺堬拷",
+    "category": 1,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑐闁拷+閼测晛鎮楅弶锟�"
+  },
+  {
+    "exercise_id": "eq_chest_011",
+    "name": "妤傛ü缍呯紒宕囧偍婢剁鍏�",
+    "category": 1,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑓闁拷"
+  },
+  {
+    "exercise_id": "eq_chest_012",
+    "name": "娴ｅ簼缍呯紒宕囧偍婢剁鍏�",
+    "category": 1,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼崇ǹ銇囬懖灞肩瑐闁拷"
+  },
+  {
+    "exercise_id": "eq_back_001",
+    "name": "鐎硅姤褰欐妯圭秴娑撳濯�",
+    "category": 2,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼冲矂妲橀懖灞筋樆娓氾拷"
+  },
+  {
+    "exercise_id": "eq_back_002",
+    "name": "缁愬嫭褰欐妯圭秴娑撳濯�",
+    "category": 2,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼冲矂妲橀懖灞肩瑓闁拷"
+  },
+  {
+    "exercise_id": "eq_back_003",
+    "name": "閸欏秵褰欐妯圭秴娑撳濯�",
+    "category": 2,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼冲矂妲橀懖灞肩瑓闁拷+閼插彉绨╂径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_back_004",
+    "name": "鏉堝懎濮鏇氱秼閸氭垳绗傞張锟�",
+    "category": 2,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼冲矂妲橀懖锟�+閼插彉绨╂径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_back_005",
+    "name": "閸楁洝鍣︾紒宕囧偍娑撳濯�",
+    "category": 2,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼冲矂妲橀懖灞藉礋娓氾拷"
+  },
+  {
+    "exercise_id": "eq_back_006",
+    "name": "閸ф劕协缂佸磭鍌ㄩ崚鎺曞煘",
+    "category": 2,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑擃叀鍎�+閼垮崬鑸伴懖锟�"
+  },
+  {
+    "exercise_id": "eq_back_007",
+    "name": "T閺夌姴鍨濋懜锟�",
+    "category": 2,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑擃叀鍎楅崢姘"
+  },
+  {
+    "exercise_id": "eq_back_008",
+    "name": "閸濇垿鎼╅崡鏇″櫐閸掓帟鍩�",
+    "category": 2,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑擃叀鍎楅崡鏇氭櫠"
+  },
+  {
+    "exercise_id": "eq_back_009",
+    "name": "閺夌娀鎼╂穱顖濋煩閸掓帟鍩�",
+    "category": 2,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "娑擃叀鍎楅崢姘"
+  },
+  {
+    "exercise_id": "eq_back_010",
+    "name": "閸濆牆鍘犻崚鎺曞煘閺堬拷",
+    "category": 2,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑擃叀鍎楅崢姘"
+  },
+  {
+    "exercise_id": "eq_back_011",
+    "name": "鐏炶京绶ら幐楦块煩",
+    "category": 2,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "缁旀牞鍓ㄩ懖锟�"
+  },
+  {
+    "exercise_id": "eq_back_012",
+    "name": "閺夌娀鎼╃涵顒佸",
+    "category": 2,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "缁旀牞鍓ㄩ懖锟�+閼垫ḿ鎬€閼诧拷+閼封偓"
+  },
+  {
+    "exercise_id": "eq_back_013",
+    "name": "閸濇垿鎼╃涵顒佸",
+    "category": 2,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "缁旀牞鍓ㄩ懖锟�+閼封偓"
+  },
+  {
+    "exercise_id": "eq_shoulder_001",
+    "name": "閸ф劕协閸濇垿鎼╅幒銊ゅ",
+    "category": 3,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞炬殻娴ｏ拷"
+  },
+  {
+    "exercise_id": "eq_shoulder_002",
+    "name": "閸ф劕协閺夌娀鎼╅幒銊ゅ",
+    "category": 3,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞藉閺夌喍璐熸稉锟�"
+  },
+  {
+    "exercise_id": "eq_shoulder_003",
+    "name": "閸ｃ劍顫懖鈺傚腹閺堬拷",
+    "category": 3,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞炬殻娴ｏ拷"
+  },
+  {
+    "exercise_id": "eq_shoulder_004",
+    "name": "閸濇垿鎼╂笟褍閽╂稉锟�",
+    "category": 3,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞艰厬閺夛拷"
+  },
+  {
+    "exercise_id": "eq_shoulder_005",
+    "name": "缂佸磭鍌ㄦ笟褍閽╂稉锟�",
+    "category": 3,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞艰厬閺夛拷"
+  },
+  {
+    "exercise_id": "eq_shoulder_006",
+    "name": "閸濇垿鎼╂穱顖濋煩妞嬬偤绗�",
+    "category": 3,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞芥倵閺夛拷"
+  },
+  {
+    "exercise_id": "eq_shoulder_007",
+    "name": "缂佸磭鍌ㄩ棃銏″",
+    "category": 3,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞芥倵閺夛拷+娑撳﹨鍎�"
+  },
+  {
+    "exercise_id": "eq_shoulder_008",
+    "name": "閸濇垿鎼╅崜宥呴挬娑擄拷",
+    "category": 3,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "娑撳顫楅懖灞藉閺夛拷"
+  },
+  {
+    "exercise_id": "eq_arm_001",
+    "name": "閺夌娀鎼╁顖欏",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绨╂径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_arm_002",
+    "name": "閸濇垿鎼╁顖欏",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绨╂径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_arm_003",
+    "name": "閻椦冪瑎閸戝啿闆嗘稉锟�",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绨╂径纾嬪€㈤梹鍨仈"
+  },
+  {
+    "exercise_id": "eq_arm_004",
+    "name": "缂佸磭鍌ㄥ顖欏",
+    "category": 4,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绨╂径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_arm_005",
+    "name": "闂嗗棔鑵戝顖欏",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绨╂径纾嬪€㈠畡鏉库偓锟�"
+  },
+  {
+    "exercise_id": "eq_arm_006",
+    "name": "缂佸磭鍌ㄦ稉瀣竾(閻╁瓨娼�)",
+    "category": 4,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绗佹径纾嬪€㈡径鏍︽櫠婢讹拷"
+  },
+  {
+    "exercise_id": "eq_arm_007",
+    "name": "缂佸磭鍌ㄦ稉瀣竾(V閺夛拷)",
+    "category": 4,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绗佹径纾嬪€㈤崘鍛櫠婢讹拷"
+  },
+  {
+    "exercise_id": "eq_arm_008",
+    "name": "缁愬嫯绐涢弶鐘绘惄閸椦勫腹",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绗佹径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_arm_009",
+    "name": "閸濇垿鎼╂０鍫濇倵閼峰倸鐪绘导锟�",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绗佹径纾嬪€㈤梹鍨仈"
+  },
+  {
+    "exercise_id": "eq_arm_010",
+    "name": "閸ｃ劍顫懛鍌氱溁娴硷拷",
+    "category": 4,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼插彉绗佹径纾嬪€�"
+  },
+  {
+    "exercise_id": "eq_arm_011",
+    "name": "閺夌娀鎼╅懙鏇為泦娑擄拷",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閸撳秷鍣︾仦鍫ｅ€㈢紘锟�"
+  },
+  {
+    "exercise_id": "eq_arm_012",
+    "name": "閸欏秵褰欓懙鏇為泦娑擄拷",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閸撳秷鍣︽导姝屽€㈢紘锟�"
+  },
+  {
+    "exercise_id": "eq_arm_013",
+    "name": "閸愭粌銇嬬悰宀冭泲",
+    "category": 4,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閸撳秷鍣�+閺嶇ǹ绺�"
+  },
+  {
+    "exercise_id": "eq_leg_001",
+    "name": "閺夌娀鎼╁ǎ杈叡",
+    "category": 5,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼测€虫磽婢剁鍊�+閼封偓婢堆嗗€�"
+  },
+  {
+    "exercise_id": "eq_leg_002",
+    "name": "閸濆牆鍘犲ǎ杈叡閺堬拷",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.3,
+    "muscle_group": "閼测€虫磽婢剁鍊�"
+  },
+  {
+    "exercise_id": "eq_leg_003",
+    "name": "閼靛じ濡囬張锟�",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.3,
+    "muscle_group": "閼测€虫磽婢剁鍊�+閼封偓"
+  },
+  {
+    "exercise_id": "eq_leg_004",
+    "name": "閼靛灝鐪绘导鍛婃簚",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼测€虫磽婢剁鍊㈢€涖倗鐝�"
+  },
+  {
+    "exercise_id": "eq_leg_005",
+    "name": "閸濇垿鎼╃粻顓燁劄闊拷",
+    "category": 5,
+    "equipment_type": 1,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼测€虫磽婢剁鍊�+閼封偓"
+  },
+  {
+    "exercise_id": "eq_leg_006",
+    "name": "閺夌娀鎼╃粻顓燁劄闊拷",
+    "category": 5,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼测€虫磽婢剁鍊�+閼封偓"
+  },
+  {
+    "exercise_id": "eq_leg_007",
+    "name": "娣囶垰宕搁懙鍨泦娑撶偓婧€",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼垫ḿ鎬€閼诧拷"
+  },
+  {
+    "exercise_id": "eq_leg_008",
+    "name": "閸ф劕协閼靛灝闆嗘稉鐐簚",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼垫ḿ鎬€閼诧拷"
+  },
+  {
+    "exercise_id": "eq_leg_009",
+    "name": "缂冩鈹堢亸闂寸肮绾剚濯�(RDL)",
+    "category": 5,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼垫ḿ鎬€閼诧拷+閼封偓"
+  },
+  {
+    "exercise_id": "eq_leg_010",
+    "name": "閸栨顑傞幐锟�",
+    "category": 5,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼垫ḿ鎬€閼插矁鈧劕濮�"
+  },
+  {
+    "exercise_id": "eq_leg_011",
+    "name": "閼封偓閹恒劍婧€",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼封偓婢堆嗗€�"
+  },
+  {
+    "exercise_id": "eq_leg_012",
+    "name": "閺夌娀鎼╅懛鈧锟�",
+    "category": 5,
+    "equipment_type": 1,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼封偓婢堆嗗€�"
+  },
+  {
+    "exercise_id": "eq_leg_013",
+    "name": "妤傚顦荤仦鏇熸簚",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼封偓娑擃叀鍊�(娓氀嗗櫍)"
+  },
+  {
+    "exercise_id": "eq_leg_014",
+    "name": "妤傚鍞撮弨鑸垫簚",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "婢堆嗗悪閸愬懍鏅�"
+  },
+  {
+    "exercise_id": "eq_leg_015",
+    "name": "缂佸磭鍌ㄩ崥搴ゆ丢閼碉拷",
+    "category": 5,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼封偓婢堆嗗€�"
+  },
+  {
+    "exercise_id": "eq_leg_016",
+    "name": "缁旀瑥协閹绘劘鍌呴張锟�",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.2,
+    "muscle_group": "閼垫捁鍋侀懖锟�"
+  },
+  {
+    "exercise_id": "eq_leg_017",
+    "name": "閸ф劕协閹绘劘鍌呴張锟�",
+    "category": 5,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "濮ｆ梻娲版ジ鑹板€�"
+  },
+  {
+    "exercise_id": "eq_core_001",
+    "name": "閸楃柉鍚傞張锟�",
+    "category": 6,
+    "equipment_type": 2,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼靛湱娲块懖锟�"
+  },
+  {
+    "exercise_id": "eq_core_002",
+    "name": "閹剙鐎稉鎹愬悪",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼靛湱娲块懖灞肩瑓闁拷"
+  },
+  {
+    "exercise_id": "eq_core_003",
+    "name": "娣囧嫮缍忛弬顖濇祮娴ｏ拷",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼佃鏋╅懖锟�"
+  },
+  {
+    "exercise_id": "eq_core_004",
+    "name": "楠炶櫕婢橀弨顖涙嫼",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閺嶇ǹ绺剧粙鍐茬暰閼诧拷"
+  },
+  {
+    "exercise_id": "eq_core_005",
+    "name": "缂佸磭鍌ㄩ崡鐤悅",
+    "category": 6,
+    "equipment_type": 3,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼靛湱娲块懖灞肩瑐闁拷"
+  },
+  {
+    "exercise_id": "eq_core_006",
+    "name": "娓氀冨祹閼碉拷",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 0.1,
+    "muscle_group": "閼佃鏋╅懖锟�"
+  },
+  {
+    "exercise_id": "bw_pushup",
+    "name": "俯卧撑",
+    "category": 1,
+    "equipment_type": 4,
+    "calories_per_minute": 7,
+    "muscle_group": "胸部/三头肌"
+  },
+  {
+    "exercise_id": "bw_squat",
+    "name": "深蹲",
+    "category": 5,
+    "equipment_type": 4,
+    "calories_per_minute": 8,
+    "muscle_group": "股四头肌/臀"
+  },
+  {
+    "exercise_id": "bw_lunge",
+    "name": "弓步蹲",
+    "category": 5,
+    "equipment_type": 4,
+    "calories_per_minute": 7.5,
+    "muscle_group": "股四头肌/臀"
+  },
+  {
+    "exercise_id": "bw_plank",
+    "name": "平板支撑",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 5,
+    "muscle_group": "核心"
+  },
+  {
+    "exercise_id": "bw_crunch",
+    "name": "卷腹",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 6,
+    "muscle_group": "腹直肌"
+  },
+  {
+    "exercise_id": "bw_situp",
+    "name": "仰卧起坐",
+    "category": 6,
+    "equipment_type": 4,
+    "calories_per_minute": 6.5,
+    "muscle_group": "腹直肌"
+  },
+  {
+    "exercise_id": "bw_pullup",
+    "name": "引体向上",
+    "category": 2,
+    "equipment_type": 4,
+    "calories_per_minute": 9,
+    "muscle_group": "背阔肌/二头肌"
+  },
+  {
+    "exercise_id": "bw_dip",
+    "name": "双杠臂屈伸",
+    "category": 1,
+    "equipment_type": 4,
+    "calories_per_minute": 8.5,
+    "muscle_group": "胸部/三头肌"
+  },
+  {
+    "exercise_id": "bw_jump",
+    "name": "跳绳",
+    "category": 0,
+    "equipment_type": 4,
+    "calories_per_minute": 10,
+    "muscle_group": "全身有氧"
+  },
+  {
+    "exercise_id": "bw_run",
+    "name": "慢跑",
+    "category": 0,
+    "equipment_type": 4,
+    "calories_per_minute": 10,
+    "muscle_group": "全身有氧"
+  }
+]

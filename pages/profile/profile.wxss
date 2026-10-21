@@ -1,0 +1,57 @@
+.step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.step-num {
+  width: 48rpx;
+  height: 48rpx;
+  background: var(--gradient-primary);
+  color: #FFFFFF;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-right: 16rpx;
+}
+
+.step-text {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.step-desc {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  margin-bottom: 32rpx;
+}
+
+.gender-group {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  gap: 24rpx;
+}
+
+.gender-option {
+  padding: 12rpx 36rpx;
+  border-radius: 32rpx;
+  border: 2rpx solid var(--border-color);
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.gender-option.active {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-dark);
+}
+
+.submit-btn {
+  margin-top: 48rpx;
+}

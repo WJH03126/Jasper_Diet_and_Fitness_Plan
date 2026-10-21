@@ -1,0 +1,79 @@
+<view class="page-container">
+  <view class="user-header">
+    <view class="avatar-wrap">
+      <view class="user-avatar">
+        <view class="avatar-default">{{avatarInitial}}</view>
+      </view>
+    </view>
+    <view class="user-info">
+      <view class="user-name">{{userInfo.real_name || '用户'}}<text class="user-nickname" wx:if="{{userInfo.nickname}}">（{{userInfo.nickname}}）</text></view>
+      <view class="user-meta" wx:if="{{userInfo.height}}">
+        <text>{{userInfo.gender === 1 ? '男' : '女'}}</text>
+        <text class="dot">·</text>
+        <text>{{userInfo.height}}cm</text>
+        <text class="dot">·</text>
+        <text>{{userInfo.weight}}kg</text>
+        <text class="dot">·</text>
+        <text>BMI {{bmi}}</text>
+      </view>
+    </view>
+    <view class="edit-btn" bindtap="goEdit">编辑</view>
+  </view>
+
+  <view class="card target-card">
+    <view class="target-head">
+      <view class="target-title-wrap">
+        <view class="title-icon"></view>
+        <text class="target-title">营养目标概览</text>
+      </view>
+      <view class="refresh-btn" bindtap="refreshTarget">
+        <text class="refresh-icon">↻</text>
+        <text class="refresh-text">刷新</text>
+      </view>
+    </view>
+    <view class="target-grid">
+      <view class="target-item">
+        <view class="target-label">能量</view>
+        <view class="target-value">{{target.energy.min}}-{{target.energy.max}}</view>
+        <view class="target-unit">kcal</view>
+      </view>
+      <view class="target-item">
+        <view class="target-label">蛋白质</view>
+        <view class="target-value">{{target.protein.min}}-{{target.protein.max}}</view>
+        <view class="target-unit">g</view>
+      </view>
+      <view class="target-item">
+        <view class="target-label">脂肪</view>
+        <view class="target-value">{{target.fat.min}}-{{target.fat.max}}</view>
+        <view class="target-unit">g</view>
+      </view>
+      <view class="target-item">
+        <view class="target-label">碳水</view>
+        <view class="target-value">{{target.carb.min}}-{{target.carb.max}}</view>
+        <view class="target-unit">g</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-card">
+    <view class="menu-item" bindtap="goEdit">
+      <view class="menu-icon edit-ic">⚙️</view>
+      <text class="menu-text">编辑个人资料</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="onSubscribeMsg">
+      <view class="menu-icon bell-ic">🔔</view>
+      <text class="menu-text">开启饮食提醒</text>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-divider"></view>
+    <view class="menu-item" bindtap="showAbout">
+      <view class="menu-icon info-ic">ℹ️</view>
+      <text class="menu-text">关于健康管家</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="logout-btn" bindtap="onLogout">退出登录</view>
+</view>

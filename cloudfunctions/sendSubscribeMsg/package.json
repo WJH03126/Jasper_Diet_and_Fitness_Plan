@@ -1,0 +1,12 @@
+{
+  "name": "sendSubscribeMsg",
+  "version": "1.0.0",
+  "description": "订阅消息推送云函数",
+  "main": "index.js",
+  "permissions": {
+    "openapi": ["subscribeMessage.send"]
+  },
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

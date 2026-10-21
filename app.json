@@ -1,0 +1,49 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/profile/profile",
+    "pages/diet/diet",
+    "pages/diet-wheel/diet-wheel",
+    "pages/diet-calendar/diet-calendar",
+    "pages/fitness/fitness",
+    "pages/equipment/equipment",
+    "pages/plan-create/plan-create",
+    "pages/calendar/calendar",
+    "pages/mine/mine"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#10B981",
+    "navigationBarTitleText": "健康管理",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#10B981",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/diet/diet",
+        "text": "饮食"
+      },
+      {
+        "pagePath": "pages/fitness/fitness",
+        "text": "健身"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "用于记录你的运动位置信息"
+    }
+  },
+  "requiredPrivateInfos": [],
+  "sitemapLocation": "sitemap.json",
+  "style": "v2"
+}
