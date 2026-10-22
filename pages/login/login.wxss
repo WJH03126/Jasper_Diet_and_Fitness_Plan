@@ -1,6 +1,6 @@
 .login-page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #D1FAE5 0%, #FFFFFF 50%, #F5F7FA 100%);
+  background: linear-gradient(180deg, #D1FAE5 0%, #FFFFFF 50%, #F5F7FA 100%);   
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,7 +12,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 120rpx;
+  margin-bottom: 100rpx;
 }
 
 .logo-icon {
@@ -61,6 +61,9 @@
   justify-content: center;
   box-shadow: 0 12rpx 32rpx rgba(16, 185, 129, 0.35);
   border: none;
+  padding: 0;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .login-btn::after {
@@ -77,13 +80,110 @@
   font-size: 36rpx;
 }
 
-.login-tip {
+.guest-divider {
+  margin-top: 48rpx;
+  margin-bottom: 24rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1rpx;
+  background: var(--border-color);
+}
+
+.divider-text {
+  font-size: 22rpx;
+  color: var(--text-muted);
+}
+
+.guest-entry {
+  width: 100%;
+  height: 80rpx;
+  background: #FFFFFF;
+  border-radius: 40rpx;
+  border: 2rpx solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10rpx;
+  transition: all 0.2s ease;
+}
+
+.guest-entry:active {
+  background: #F3F4F6;
+  border-color: #D1D5DB;
+}
+
+.guest-icon {
+  font-size: 32rpx;
+}
+
+.guest-text {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.guest-hint {
+  font-size: 20rpx;
+  color: var(--text-muted);
+}
+
+.agreement-row {
   margin-top: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.custom-checkbox {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 6rpx;
+  border: 2rpx solid #9CA3AF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox.checked {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.check-icon {
+  color: #FFFFFF;
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.agreement-text {
   font-size: 24rpx;
   color: var(--text-muted);
-  text-align: center;
+}
+
+.agreement-links {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
 }
 
 .link {
+  font-size: 24rpx;
   color: var(--primary-color);
+  text-decoration: underline;
 }

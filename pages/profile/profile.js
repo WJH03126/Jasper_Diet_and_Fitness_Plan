@@ -1,6 +1,7 @@
+const localDB = require('../../utils/cloud-storage.js')
 const app = getApp()
 const logger = require('../../utils/logger.js')
-const { showLoading, hideLoading, showToast, calcNutritionTarget } = require('../../utils/util.js')
+const {showLoading, hideLoading, showToast, calcNutritionTarget, requirePrivacyAgree} = require('../../utils/util.js')
 
 const TAG = '[page:profile]'
 
@@ -18,7 +19,7 @@ Page({
 
   onLoad() {
     logger.info(TAG, 'onLoad')
-    const userInfo = wx.getStorageSync('userInfo')
+    const userInfo = localDB.getRaw('userInfo')
     if (userInfo && userInfo.real_name) {
       logger.info(TAG, 'onLoad mode=edit nickname=', userInfo.nickname)
       this.setData({
@@ -59,7 +60,10 @@ Page({
   },
 
   async onSubmit() {
-    if (!this.validate() || this.data.submitting) return
+
+    const privacyOk = await requirePrivacyAgree('保存个人资料');
+    if (!privacyOk) { return; }
+      if (!this.validate() || this.data.submitting) return
     this.setData({ submitting: true })
     showLoading('保存中...')
 
@@ -72,24 +76,25 @@ Page({
       'openid=', openid, 'h=', height, 'w=', weight, 'g=', this.data.form.gender, 'isEdit=', this.data.isEdit)
 
     try {
-      if (app.globalData.cloudReady) {
-        await this.saveToCloud(openid, height, weight, age)
-      } else {
-        logger.info(TAG, 'onSubmit cloud_not_ready save_local_only')
-      }
-
       const nutritionTarget = calcNutritionTarget({
         gender: this.data.form.gender, height, weight, age, activity_level: this.data.form.activity_level
       })
       logger.info(TAG, 'onSubmit nutritionTarget energy=', nutritionTarget.energy?.value, 'protein=', nutritionTarget.protein?.value)
+
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
+        await this.saveToCloud(openid, height, weight, age, nutritionTarget)
+      } else {
+        logger.info(TAG, 'onSubmit cloud_not_ready save_local_only')
+      }
+
       app.refreshNutritionTarget(nutritionTarget)
 
       const updatedUserInfo = {
-        ...(wx.getStorageSync('userInfo') || {}),
+        ...(localDB.getRaw('userInfo') || {}),
         nickname: this.data.form.nickname, real_name: this.data.form.real_name,
         gender: this.data.form.gender, height, weight, age, activity_level: this.data.form.activity_level
       }
-      wx.setStorageSync('userInfo', updatedUserInfo)
+      localDB.setRaw('userInfo', updatedUserInfo)
       app.globalData.userInfo = updatedUserInfo
 
       hideLoading(); showToast('资料保存成功', 'success')
@@ -107,34 +112,29 @@ Page({
     }
   },
 
-  async saveToCloud(openid, height, weight, age) {
-    let updateOk = false
-    if (!app.globalData.cloudReady) return false
+  async saveToCloud(openid, height, weight, age, nutritionTarget) {
+    if (!app.globalData.cloudReady || app.globalData.isGuest) return false
     const db = wx.cloud.database()
     try {
-      const cloudRes = await wx.cloud.callFunction({
-        name: 'updateUser',
-        data: { openid, nickname: this.data.form.nickname, real_name: this.data.form.real_name,
-          gender: this.data.form.gender, height, weight, age, activity_level: this.data.form.activity_level }
-      })
-      updateOk = cloudRes.result?.code === 0
-      logger.info(TAG, 'saveToCloud callFunction=updateUser ok=', updateOk)
-    } catch (err) { logger.warn(TAG, 'saveToCloud callFunction fail fallback_direct', err.message) }
-
-    if (!updateOk) {
-      try {
-        const userRes = await db.collection('user_info').where({ openid }).get()
-        logger.info(TAG, 'saveToCloud direct_query count=', userRes.data.length)
-        if (userRes.data.length > 0) {
-          await db.collection('user_info').doc(userRes.data[0]._id).update({
-            data: { nickname: this.data.form.nickname, real_name: this.data.form.real_name,
-              gender: this.data.form.gender, height, weight, age, activity_level: this.data.form.activity_level,
-              update_time: db.serverDate() }
-          })
-          updateOk = true; logger.info(TAG, 'saveToCloud direct_update ok')
-        }
-      } catch (err) { logger.warn(TAG, 'saveToCloud direct_update fail', err.message) }
+      const userRes = await db.collection('user_info').where({ openid }).get()
+      if (userRes.data.length === 0) {
+        logger.warn(TAG, 'saveToCloud no user_info for openid=', openid)
+        return false
+      }
+      const patch = {
+        nickname: this.data.form.nickname,
+        real_name: this.data.form.real_name,
+        gender: this.data.form.gender,
+        height, weight, age, activity_level: this.data.form.activity_level,
+        update_time: db.serverDate()
+      }
+      if (nutritionTarget) patch.nutrition_target = nutritionTarget
+      await db.collection('user_info').doc(userRes.data[0]._id).update({ data: patch })
+      logger.info(TAG, 'saveToCloud ok height=', height, 'weight=', weight, 'hasNutritionTarget=', !!nutritionTarget)
+      return true
+    } catch (err) {
+      logger.error(TAG, 'saveToCloud fail', err.message, err.errMsg)
+      return false
     }
-    return updateOk
   }
 })

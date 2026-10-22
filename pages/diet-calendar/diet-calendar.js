@@ -1,6 +1,7 @@
 const app = getApp()
+const localDB = require('../../utils/cloud-storage.js')
 const logger = require('../../utils/logger.js')
-const { today, checkNutritionStatus, calcNutritionPercent, getStatusClass, round, mealTypeMap } = require('../../utils/util.js')
+const {today, checkNutritionStatus, calcNutritionPercent, getStatusClass, round, mealTypeMap, requirePrivacyAgree} = require('../../utils/util.js')
 
 const TAG = '[page:diet-calendar]'
 const LOCAL_RECORDS_KEY = 'local_diet_records'
@@ -64,7 +65,7 @@ Page({
   },
 
   loadTarget() {
-    const s = wx.getStorageSync('nutritionTarget')
+    const s = localDB.getRaw('nutritionTarget')
     if (s) {
       this.setData({ target: { ...this.data.target, ...s } })
     }
@@ -93,7 +94,7 @@ Page({
   },
 
   getLocalRecordsByMonth(monthPrefix) {
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     return all.filter(r => {
       const d = toDateStr(r.record_date || r.recordDate)
       return d.startsWith(monthPrefix)
@@ -101,7 +102,7 @@ Page({
   },
 
   getLocalRecordsByDate(date) {
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     return all.filter(r => {
       const d = toDateStr(r.record_date || r.recordDate)
       return d === date
@@ -171,7 +172,7 @@ Page({
     let localRecords = []
     try {
       localRecords = this.getLocalRecordsByMonth(monthPrefix)
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         cloudRecords = await this._fetchCloudRecordsByMonth(this.data.year, this.data.month)
         logger.info(TAG, '_markDaysEnergy cloud=', cloudRecords.length, 'local=', localRecords.length)
       }
@@ -241,7 +242,7 @@ Page({
     let localRecords = []
     try {
       localRecords = this.getLocalRecordsByDate(date)
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         cloudRecords = await this._fetchCloudRecordsByDate(date)
         logger.info(TAG, 'loadDetailRecords cloud=', cloudRecords.length, 'local=', localRecords.length)
       }

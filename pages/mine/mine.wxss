@@ -228,3 +228,51 @@
 .logout-btn::after {
   border: none;
 }
+
+.avatar-wrap {
+  position: relative;
+}
+
+.guest-badge {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #FEF3C7;
+  color: #92400E;
+  font-size: 18rpx;
+  font-weight: 600;
+  padding: 4rpx 14rpx;
+  border-radius: 16rpx;
+  border: 2rpx solid #F59E0B;
+  white-space: nowrap;
+}
+
+.guest-logout {
+  color: var(--warning-color);
+}
+
+.upgrade-btn {
+  margin-top: 48rpx;
+  background: var(--gradient-primary);
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 28rpx 0;
+  border-radius: 48rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 28rpx rgba(16, 185, 129, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 2rpx;
+}
+
+.upgrade-btn::after {
+  border: none;
+}
+
+.upgrade-icon {
+  font-size: 34rpx;
+  margin-right: 10rpx;
+}

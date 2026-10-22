@@ -1,6 +1,6 @@
 const app = getApp()
 const logger = require('../../utils/logger.js')
-const { showToast, round, showModal } = require('../../utils/util.js')
+const { showToast, round, showModal, requirePrivacyAgree } = require('../../utils/util.js')
 const localDB = require('../../utils/cloud-storage.js')
 const FOODS = require('../../data/food')
 
@@ -72,14 +72,22 @@ Page({
   },
 
   getAllFoods() {
-    const removed = new Set(wx.getStorageSync(REMOVED_BUILTIN_KEY) || [])
-    const custom = wx.getStorageSync(CUSTOM_FOODS_KEY) || []
+    const removed = new Set(localDB.getAll('removed_builtin_foods'))
+    const custom = localDB.getAll('custom_foods')
     const builtin = FOODS.filter(f => !removed.has(f.food_id))
     return [...builtin, ...custom]
   },
 
-  onLoad() {
+  async onLoad() {
     logger.info(TAG, 'onLoad')
+    try {
+      await Promise.all([
+        localDB.syncCustomFoodsFromCloud(),
+        localDB.syncUserPrefFromCloud()
+      ])
+    } catch (e) {
+      logger.warn(TAG, 'onLoad cloud sync fail, use local', e.message)
+    }
     this.initDefaultPools()
   },
 
@@ -202,8 +210,11 @@ Page({
 
   noop() {},
 
-  saveCustomFood() {
-    try {
+  async saveCustomFood() {
+
+    const privacyOk = await requirePrivacyAgree('保存自定义食物 /*GUARDED_saveCustomFood*/');
+    if (!privacyOk) { return; }
+      try {
       const { customName, customEnergy, customProtein, customFat, customCarb, customFiber, customSalt, customWeight, activeMeal } = this.data
       const name = (customName || '').trim()
       logger.info(TAG, 'saveCustomFood input name=', name, 'energy=', customEnergy, 'protein=', customProtein, 'weight=', customWeight, 'meal=', activeMeal)
@@ -219,7 +230,7 @@ Page({
 
       let custom = []
       try {
-        const raw = wx.getStorageSync(CUSTOM_FOODS_KEY)
+        const raw = localDB.getAll('custom_foods')
         if (Array.isArray(raw)) custom = raw
       } catch (e) {
         logger.warn(TAG, 'saveCustomFood read storage fallback', e.message)
@@ -239,7 +250,8 @@ Page({
         isCustom: true
       }
       custom.push(newFood)
-      wx.setStorageSync(CUSTOM_FOODS_KEY, custom)
+      localDB.setAll('custom_foods', custom)
+      localDB.addCustomFoodCloud(newFood)
       logger.info(TAG, 'saveCustomFood saved storage ok count=', custom.length)
 
       const pools = JSON.parse(JSON.stringify(this.data.pools || { 1: [], 2: [], 3: [] }))
@@ -317,7 +329,10 @@ Page({
   },
 
   async batchRemoveFromPool() {
-    if (!this.data.poolEditSelected.length) { showToast('请先选择'); return }
+
+    const privacyOk = await requirePrivacyAgree('批量移除食物 /*GUARDED_batchRemoveFromPool*/');
+    if (!privacyOk) { return; }
+      if (!this.data.poolEditSelected.length) { showToast('请先选择'); return }
     const confirm = await showModal('提示', `确定从转盘移除选中的 ${this.data.poolEditSelected.length} 种食物吗？`)
     if (!confirm) return
     try {
@@ -387,13 +402,16 @@ Page({
       const toRemoveCustom = currentList.filter(f => f.isCustom && set.has(f.food_id)).map(f => f.food_id)
 
       if (toRemoveBuiltin.length) {
-        const existing = wx.getStorageSync(REMOVED_BUILTIN_KEY) || []
-        wx.setStorageSync(REMOVED_BUILTIN_KEY, [...new Set([...existing, ...toRemoveBuiltin])])
+        const existing = localDB.getAll('removed_builtin_foods')
+        const merged = [...new Set([...existing, ...toRemoveBuiltin])]
+        localDB.setAll('removed_builtin_foods', merged)
+        localDB.saveRemovedBuiltinCloud(merged)
       }
       if (toRemoveCustom.length) {
-        const existing = wx.getStorageSync(CUSTOM_FOODS_KEY) || []
+        const existing = localDB.getAll('custom_foods')
         const remain = existing.filter(f => !set.has(f.food_id))
-        wx.setStorageSync(CUSTOM_FOODS_KEY, remain)
+        localDB.setAll('custom_foods', remain)
+        localDB.removeCustomFoodCloud(toRemoveCustom)
       }
 
       const all = this.getAllFoods()
@@ -423,8 +441,11 @@ Page({
     this.setData({ spinHistory: [], selectedResult: null })
   },
 
-  confirmAdd() {
-    const history = this.data.spinHistory
+  async confirmAdd() {
+
+    const privacyOk = await requirePrivacyAgree('一键添加饮食记录 /*GUARDED_confirmAdd*/');
+    if (!privacyOk) { return; }
+      const history = this.data.spinHistory
     if (!history || history.length === 0) { showToast('还没选食物'); return }
     const meal = this.data.activeMeal
     this.setData({ adding: true })

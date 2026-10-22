@@ -90,9 +90,22 @@ const showModal = (title, content, options = {}) => {
       content,
       confirmColor: '#10B981',
       success: (res) => resolve(res.confirm),
+      fail: () => resolve(false),
       ...options
     })
   })
+}
+
+const PRIVACY_SUMMARY = '【协议核心要点】\n• 本小程序为健康管理工具，不构成医疗建议\n• 个人数据存储在本地，不会上传服务器\n• 可在「我的」页面随时查看完整协议\n• 退出游客模式将清空所有本地数据\n\n点击「同意」即表示您已阅读并同意《用户服务协议》和《隐私政策》。'
+
+const requirePrivacyAgree = async (content) => {
+  if (wx.getStorageSync('privacy_agreed') === true) return true
+  const ok = await showModal('请先同意协议', PRIVACY_SUMMARY, { confirmText: '同意', cancelText: '暂不使用' })
+  if (ok) {
+    wx.setStorageSync('privacy_agreed', true)
+    return true
+  }
+  return false
 }
 
 const primaryPartMap = {
@@ -189,6 +202,7 @@ module.exports = {
   hideLoading,
   showToast,
   showModal,
+  requirePrivacyAgree,
   primaryPartMap,
   equipmentTypeMap,
   mealTypeMap,

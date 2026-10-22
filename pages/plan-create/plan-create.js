@@ -1,6 +1,6 @@
 const app = getApp()
 const logger = require('../../utils/logger.js')
-const { showLoading, hideLoading, showToast, showModal, today } = require('../../utils/util.js')
+const {showLoading, hideLoading, showToast, showModal, today, requirePrivacyAgree} = require('../../utils/util.js')
 const localDB = require('../../utils/cloud-storage.js')
 const EQUIPMENTS = require('../../data/equipment')
 const EXERCISE = require('../../data/exercise')
@@ -8,7 +8,7 @@ const EXERCISE = require('../../data/exercise')
 const TAG = '[page:plan-create]'
 
 function ensureCloud() {
-  if (!app.globalData.cloudReady) return null
+  if (!app.globalData.cloudReady || app.globalData.isGuest) return null
   return wx.cloud.database()
 }
 
@@ -159,8 +159,11 @@ Page({
     })
   },
 
-  saveTemplate() {
-    if (this.data.planItems.length === 0) {
+  async saveTemplate() {
+
+    const privacyOk = await requirePrivacyAgree('保存训练模板 /*GUARDED_saveTemplate*/');
+    if (!privacyOk) { return; }
+      if (this.data.planItems.length === 0) {
       showToast('请先添加器械')
       return
     }
@@ -180,12 +183,29 @@ Page({
       create_time: Date.now()
     }
     localDB.add(localDB.STORES.PLAN_TEMPLATES, tpl)
-    showToast('模板已保存')
-    logger.info(TAG, 'saveTemplate id=', tpl.template_id)
-  },
+
+    const cloud = ensureCloud()
+    if (cloud) {
+      try {
+        tpl.openid = wx.getStorageSync('openid') || ''
+        tpl.create_time = cloud.serverDate()
+        await cloud.collection('plan_template').add({ data: tpl })
+        logger.info(TAG, 'saveTemplate cloud ok')
+      } catch (err) {
+        logger.warn(TAG, 'saveTemplate cloud fail, local saved', err.message)
+      }
+    }
+
+      showToast('模板已保存')
+      logger.info(TAG, 'saveTemplate id=', tpl.template_id)
+      setTimeout(() => wx.redirectTo({ url: '/pages/calendar/calendar' }), 800)
+    },
 
   async savePlan() {
-    if (this.data.planItems.length === 0) {
+
+    const privacyOk = await requirePrivacyAgree('保存训练计划 /*GUARDED_savePlan*/');
+    if (!privacyOk) { return; }
+      if (this.data.planItems.length === 0) {
       showToast('请先添加器械')
       return
     }
@@ -197,7 +217,7 @@ Page({
     this.setData({ saving: true })
     showLoading('保存中...')
 
-    const userInfo = wx.getStorageSync('userInfo') || {}
+    const userInfo = localDB.getRaw('userInfo') || {}
     const user_id = userInfo.user_id || ('u_local_' + Date.now().toString(36))
     const cloud = ensureCloud()
 

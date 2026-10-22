@@ -1,7 +1,7 @@
 <view class="login-page">
   <view class="login-header">
     <view class="logo-icon">🌿</view>
-    <view class="app-title">健康管家</view>
+    <view class="app-title">INFJ 的 FitMeal</view>
     <view class="app-subtitle">科学健身 · 营养管理 · 品质生活</view>
   </view>
 
@@ -10,11 +10,28 @@
       <text class="btn-icon">💬</text>
       <text>微信授权登录</text>
     </button>
-    <view class="login-tip">
-      <text>登录即代表您已阅读并同意</text>
-      <text class="link">《用户协议》</text>
-      <text>与</text>
-      <text class="link">《隐私政策》</text>
+    <view class="guest-divider">
+      <view class="divider-line"></view>
+      <text class="divider-text">或者</text>
+      <view class="divider-line"></view>
+    </view>
+    <view class="guest-entry" bindtap="onGuestLogin">
+      <text class="guest-icon">👤</text>
+      <text class="guest-text">先体验，想注册再升级</text>
+      <text class="guest-hint">（退出后数据清空）</text>
+    </view>
+    <view class="agreement-row">
+      <view class="checkbox-wrapper" bindtap="onToggleAgree">
+        <view class="custom-checkbox {{agreed ? 'checked' : ''}}">
+          <text wx:if="{{agreed}}" class="check-icon">✓</text>
+        </view>
+        <text class="agreement-text">我已阅读并同意</text>
+      </view>
+      <view class="agreement-links">
+        <text class="link" bindtap="onViewAgreement" data-type="user">《用户服务协议》</text>
+        <text class="agreement-text">与</text>
+        <text class="link" bindtap="onViewAgreement" data-type="privacy">《隐私政策》</text>
+      </view>
     </view>
   </view>
 </view>

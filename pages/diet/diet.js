@@ -1,6 +1,7 @@
+﻿﻿const localDB = require('../../utils/cloud-storage.js')
 const app = getApp()
 const logger = require('../../utils/logger.js')
-const { today, checkNutritionStatus, calcNutritionPercent, getStatusClass, round, mealTypeMap, showLoading, hideLoading, showToast, showModal } = require('../../utils/util.js')
+const { today, checkNutritionStatus, calcNutritionPercent, getStatusClass, round, mealTypeMap, showLoading, hideLoading, showToast, showModal, requirePrivacyAgree } = require('../../utils/util.js')
 const FOOD_DICT = require('../../data/food')
 
 const TAG = '[page:diet]'
@@ -81,8 +82,8 @@ Page({
   },
 
   getAllFoods() {
-    const removed = new Set(wx.getStorageSync(REMOVED_BUILTIN_KEY) || [])
-    const custom = wx.getStorageSync(CUSTOM_FOODS_KEY) || []
+    const removed = new Set(localDB.getAll('removed_builtin_foods'))
+    const custom = localDB.getAll('custom_foods')
     const builtin = FOOD_DICT.filter(f => !removed.has(f.food_id))
     return [...builtin, ...custom]
   },
@@ -95,6 +96,10 @@ Page({
       this.setData({ currentDate: pendingDate })
     }
     logger.info(TAG, 'onShow currentDate=', this.data.currentDate, 'cloudReady=', app.globalData.cloudReady)
+    Promise.all([
+      localDB.syncCustomFoodsFromCloud(),
+      localDB.syncUserPrefFromCloud()
+    ]).catch(e => logger.warn(TAG, 'onShow cloud food sync fail', e.message))
     this.loadTarget()
     this.calcWeek()
     this.loadRecords()
@@ -117,7 +122,7 @@ Page({
   },
 
   loadTarget() {
-    const storageTarget = wx.getStorageSync('nutritionTarget')
+    const storageTarget = localDB.getRaw('nutritionTarget')
     if (storageTarget) {
       logger.info(TAG, 'loadTarget ok version=', storageTarget.version)
       const target = { ...this.data.target, ...storageTarget }
@@ -128,31 +133,31 @@ Page({
   },
 
   getLocalRecords() {
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     const date = this.data.currentDate
     return all.filter(r => (r.record_date || r.recordDate) === date)
   },
 
   saveLocalRecord(record) {
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     record.recordDate = this.data.currentDate
     all.push(record)
-    wx.setStorageSync(LOCAL_RECORDS_KEY, all)
+    localDB.setAll('local_diet_records', all)
     logger.info(TAG, 'saveLocalRecord ok total=', all.length)
   },
 
   removeLocalRecord(id) {
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     const filtered = all.filter(r => r.record_id !== id)
-    wx.setStorageSync(LOCAL_RECORDS_KEY, filtered)
+    localDB.setAll('local_diet_records', filtered)
     logger.info(TAG, 'removeLocalRecord ok remain=', filtered.length)
   },
 
   removeLocalRecords(ids) {
     const set = new Set(ids)
-    const all = wx.getStorageSync(LOCAL_RECORDS_KEY) || []
+    const all = localDB.getAll('local_diet_records')
     const filtered = all.filter(r => !set.has(r.record_id))
-    wx.setStorageSync(LOCAL_RECORDS_KEY, filtered)
+    localDB.setAll('local_diet_records', filtered)
     logger.info(TAG, 'removeLocalRecords ok ids=', ids.length, 'remain=', filtered.length)
   },
 
@@ -164,7 +169,7 @@ Page({
     try {
       let cloudRecords = []
       let localRecords = this.getLocalRecords()
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         try {
           logger.info(TAG, 'loadRecords cloud_query openid=', openid)
           const db = wx.cloud.database()
@@ -286,6 +291,8 @@ Page({
   },
 
   async deleteRecord(e) {
+    const privacyOk = await requirePrivacyAgree('删除记录需要您先阅读并同意协议。');
+    if (!privacyOk) { return; }
     const id = e.currentTarget.dataset.id
     const ids = e.currentTarget.dataset.ids
     const targetIds = (ids && ids.length) ? ids : [id]
@@ -296,7 +303,7 @@ Page({
     const confirm = await showModal('提示', msg)
     if (!confirm) { logger.info(TAG, 'deleteRecord cancel'); return }
     try {
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         try {
           const db = wx.cloud.database()
           for (const rid of targetIds) {
@@ -433,6 +440,8 @@ Page({
     this.setData({ selectedIds: isAll ? [] : ids }, () => this.filterRecords())
   },
   async batchDelete() {
+    const privacyOk = await requirePrivacyAgree('删除记录需要您先阅读并同意协议。');
+    if (!privacyOk) { return; }
     if (!this.data.selectedIds.length) { showToast('请先选择记录'); return }
     const confirm = await showModal('提示', `确定删除选中的 ${this.data.selectedIds.length} 条记录吗？`)
     if (!confirm) return
@@ -445,7 +454,7 @@ Page({
         }
       })
       const unique = [...new Set(allIds)]
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         try {
           const db = wx.cloud.database()
           for (const rid of unique) {
@@ -469,9 +478,11 @@ Page({
   },
 
   async addDietRecord(food, mealType, weight, sourceType) {
+    const privacyOk = await requirePrivacyAgree('添加记录需要您先阅读并同意协议。');
+    if (!privacyOk) { logger.info(TAG, 'addDietRecord privacy_not_agreed'); return; }
     showLoading('添加中...')
     const openid = wx.getStorageSync('openid')
-    const user_id = wx.getStorageSync('userInfo')?.user_id || ('u_local_' + Date.now().toString(36))
+    const user_id = localDB.getRaw('userInfo')?.user_id || ('u_local_' + Date.now().toString(36))
     logger.info(TAG, 'addDietRecord start food=', food.name, 'weight=', weight, 'mealType=', mealType, 'cloud=', app.globalData.cloudReady)
     const ratio = weight / 100
     const localRecord = {
@@ -488,11 +499,11 @@ Page({
       record_date: this.data.currentDate, recordDate: this.data.currentDate
     }
     try {
-      if (app.globalData.cloudReady) {
+      if (app.globalData.cloudReady && !app.globalData.isGuest) {
         try {
           const db = wx.cloud.database()
           const cloudRecord = { ...localRecord }
-          cloudRecord.record_date = db.command.eq(new Date(this.data.currentDate))
+          cloudRecord.record_date = new Date(this.data.currentDate)
           cloudRecord.create_time = db.serverDate()
           logger.info(TAG, 'addDietRecord db_add food=', food.name)
           await db.collection('diet_record').add({ data: cloudRecord })
@@ -516,3 +527,4 @@ Page({
     }
   }
 })
+

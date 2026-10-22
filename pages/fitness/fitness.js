@@ -1,6 +1,6 @@
 const app = getApp()
 const logger = require('../../utils/logger.js')
-const { showLoading, hideLoading, showToast, showModal, today } = require('../../utils/util.js')
+const { showLoading, hideLoading, showToast, showModal, today, requirePrivacyAgree } = require('../../utils/util.js')
 const localDB = require('../../utils/cloud-storage.js')
 
 const TAG = '[page:fitness]'
@@ -8,7 +8,7 @@ const TAG = '[page:fitness]'
 const WEEKDAY_CN = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
 
 function ensureCloud() {
-  if (!app.globalData.cloudReady) return null
+  if (!app.globalData.cloudReady || app.globalData.isGuest) return null
   return wx.cloud.database()
 }
 
@@ -208,7 +208,7 @@ Page({
         }
 
         const planItems = plans
-          .filter(p => p.status === 1 || (p.plan_date || '') === today())
+          .filter(p => p.status === 1)
           .slice(0, 10)
           .map(p => ({
             _type: 'plan',
@@ -369,7 +369,9 @@ Page({
     this.setData({ newWeight: e.detail.value })
   },
 
-  confirmAddWeight() {
+  async confirmAddWeight() {
+    const privacyOk = await requirePrivacyAgree('添加体重记录需要您先阅读并同意协议。');
+    if (!privacyOk) { return; }
     const w = parseFloat(this.data.newWeight)
     if (!w || w < 20 || w > 300) {
       showToast('请输入有效体重(20-300kg)')
@@ -532,7 +534,9 @@ Page({
     })
   },
 
-  batchDeleteWeight() {
+  async batchDeleteWeight() {
+    const privacyOk = await requirePrivacyAgree('删除体重记录需要您先阅读并同意协议。');
+    if (!privacyOk) { return; }
     const ids = this.data.checkedWeightIds
     if (ids.length === 0) { wx.showToast({ title: '请先选择', icon: 'none' }); return }
     wx.showModal({
